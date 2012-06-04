@@ -1,0 +1,24 @@
+<?php
+
+// set to defaults if undefined
+
+if (!isset($config->tickettimeguard)) {
+    $config->tickettimeguard = HOURSECS * 24;
+}
+
+?>
+<div id="authconfig">
+<table cellspacing="0" cellpadding="5">
+
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('tickettimeguard', 'auth_courseshop'); ?>: </td>
+    <td>
+        <input name="tickettimeguard" type="text" size="10" value="<?php echo $config->tickettimeguard / 3600 ?>" />
+    </td>
+    <td>
+        <?php print_string('configtickettimeguard', 'auth_courseshop'); ?>
+    </td>
+</tr>
+
+</table>
+</div>
