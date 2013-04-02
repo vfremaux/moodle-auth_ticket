@@ -1,0 +1,38 @@
+<?php
+
+// set to defaults if undefined
+
+if (!isset($config->tickettimeguard)) {
+    $config->tickettimeguard = HOURSECS * 24;
+}
+
+?>
+<div id="authconfig">
+<table cellspacing="0" cellpadding="5">
+
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('tickettimeguard', 'auth_ticket'); ?>: </td>
+    <td>
+        <input name="tickettimeguard" type="text" size="10" value="<?php echo $config->tickettimeguard / HOURSECS ?>" />
+    </td>
+    <td>
+        <?php print_string('configtickettimeguard', 'auth_ticket'); ?>
+    </td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('usessl', 'auth_ticket'); ?>: </td>
+    <td>
+    	<?php 
+    	$encryptoptions[0] = get_string('no', 'auth_ticket');
+    	$encryptoptions[1] = get_string('yes', 'auth_ticket');
+    	echo html_writer::select('usessl', $encryptoptions, $config->usessl);
+    	?>
+    </td>
+    <td>
+        <?php print_string('configticketusesssl', 'auth_ticket'); ?>
+    </td>
+</tr>
+
+</table>
+</div>
