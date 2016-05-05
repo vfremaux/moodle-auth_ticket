@@ -17,8 +17,8 @@
 /**
  * Version details
  *
- * @package    auth
- * @subpackage ticket
+ * @package    auth_ticket
+ * @category   auth
  * @author     valery.fremaux@gmail.com 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->version   = 2012060400;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012120300;        // Requires this Moodle version
+$plugin->requires  = 2014050800;        // Requires this Moodle version
 $plugin->component = 'auth_ticket';      // Full name of the plugin (used for diagnostics)
-$plugin->release = '2.4.0 (Build 2013031400)';
-$plugin->maturity = MATURITY_RC;
+$plugin->maturity = MATURITY_RC;      // Full name of the plugin (used for diagnostics)
+$plugin->release = '2.7.0 (Build 2012060400)';

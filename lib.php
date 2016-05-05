@@ -1,24 +1,23 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+defined('MOODLE_INTERNAL') || die;
 
 /**
- * Moodle - Modular Object-Oriented Dynamic Learning Environment
- *          http://moodle.org
- * Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @package auth-ticket
+ * @package auth_ticket
  * @category auth
  * @author     Valery Fremaux <valery@valeisti.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
@@ -45,124 +44,145 @@
 * @param string $url
 * @param string $purpose
 */
-
-function ticket_notify($recipient, $sender, $title, $notification, $notification_html, $url, $purpose = ''){
+function ticket_notify($recipient, $sender, $title, $notification, $notification_html, $url, $purpose = '') {
     global $CFG;
 
     $ticket = ticket_generate($recipient, $purpose, $url);
     $notification_html = str_replace('<%%TICKET%%>', $ticket, $notification_html);
 
-    // tickets only can be sent as HTML href values.
+    // Tickets only can be sent as HTML href values.
     $notification = str_replace('<%%TICKET%%>', '', $notification);
-    
 
     // todo send the email to user
-    if ($CFG->debugsmtp) echo "Sending Mail Notification to " . fullname($recipient) .'<br/>'.$notification_html;
+    if ($CFG->debugsmtp) {
+        echo "Sending Mail Notification to " . fullname($recipient) .'<br/>'.$notification_html;
+    }
     email_to_user($recipient, $sender, $title, $notification, $notification_html);
 }
 
 /**
-* send a notification message to all users having the role in the given context.
-* @param int $roleid
-* @param object $context
-* @param object $sender
-* @param string $title
-* @param string $notification
-* @param string $notification_html
-* @param string $url
-* @param string $purpose
-*/
-function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notification_html, $url, $purpose = ''){
+ * send a notification message to all users having the role in the given context.
+ * @param int $roleid
+ * @param object $context
+ * @param object $sender
+ * @param string $title
+ * @param string $notification
+ * @param string $notification_html
+ * @param string $url
+ * @param string $purpose
+ */
+function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notification_html, $url, $purpose = '') {
     global $CFG, $USER, $DB;
 
-    // get all users assigned to that role in context
+    // Get all users assigned to that role in context.
     $role = $DB->get_record('role', array('id' => $roleid));
     $assigns = get_users_from_role_on_context($role, $context);
-        
-    foreach($assigns as $assign){
+
+    foreach ($assigns as $assign) {
         $user = $DB->get_record('user', array('id' => $assign->userid), 'id, username, email, emailstop, firstname, lastname, mailformat');
         $ticket = ticket_generate($user, $purpose, $url);
         $notification = str_replace('<%%TICKET%%>', $ticket, $notification);
         $notification_html = str_replace('<%%TICKET%%>', $ticket, $notification_html);
     
         // todo send the email to user
-        if ($CFG->debugsmtp) echo "Sending Mail Notification to " . fullname($user) . '<br/>'.$notification;
-        email_to_user($user, $sender, $title, $notification, $notification_html);
+        if ($CFG->debugsmtp) {
+            echo "Sending Mail Notification to " . fullname($user) . '<br/>'.$notification;
+        } else {
+            email_to_user($user, $sender, $title, $notification, $notification_html);
+        }
     }
 }
 
 /**
-* generates a direct access ticket for this user.
-* @param int $userid the ID of the user to whom the ticket must be made for
-* @param string $reason the reason of the ticket
-* @param string $url the access URL the user will be redirected to after validating his return ticket. 
-*
-*/
-function ticket_generate($user, $reason, $url){
+ * generates a direct access ticket for this user.
+ * @param int $userid the ID of the user to whom the ticket must be made for
+ * @param string $reason the reason of the ticket
+ * @param string $url the access URL the user will be redirected to after validating his return ticket. 
+ * @TODO implement back an openssl alternative independant from DB special functions
+ */
+function ticket_generate($user, $reason, $url, $method = 'des') {
     global $CFG, $DB;
-    
+
+    $ticket = new StdClass();
     $ticket->username = $user->username;
     $ticket->reason = $reason;
     $ticket->wantsurl = $url;
     $ticket->date = time();
-    
+
     $keyinfo = json_encode($ticket);
-    
-    $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0,32);
 
-    $sql = "
-        SELECT
-            HEX(AES_ENCRYPT('$keyinfo', '$pkey')) as result
-    ";
+    if ($method == 'rsa'){
 
-    if($result = $DB->get_record_sql($sql)){
-        $encrypted = $result->result;
+        include_once $CFG->dirroot.'/mnet/lib.php';
+        $keypair = mnet_get_keypair();
+
+        if(!openssl_private_encrypt($ticket, $encrypted, $keypair['privatekey'])){
+            print_error("Failed making encoded ticket");
+        }
     } else {
-        $encrypted = 'encryption error';
+        $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0,32);    
+        $sql = "
+            SELECT
+                HEX(AES_ENCRYPT(?, ?)) as result
+        ";
+
+        if($result = $DB->get_record_sql($sql, array($keyinfo, $pkey))){
+            $encrypted = $result->result;
+        } else {
+            $encrypted = 'encryption error';
+        }
     }
 
     return base64_encode($encrypted); // make sure we can emit this ticket through an URL
 }
 
 /**
-* decodes a direct access ticket for this user.
-* @param string $encrypted the received ticket
-*
-*/
-function ticket_decodeTicket($encrypted){
+ * decodes a direct access ticket for this user.
+ * @param string $encrypted the received ticket
+ */
+function ticket_decodeTicket($encrypted, $method = 'des') {
     global $CFG, $DB;
-    
+
     $encrypted = base64_decode($encrypted);
         
-    $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0,32);    
-    $sql = "
-        SELECT
-            AES_DECRYPT(UNHEX('$encrypted'), '$pkey') as result
-    ";
+    if ($method == 'rsa'){
+        /* using RSA */
 
-    if($result = $DB->get_record_sql($sql)){
-        $decrypted = $result->result;
+        include_once $CFG->dirroot.'/mnet/lib.php';
+        $keypair = mnet_get_keypair();    
+
+        if (!openssl_public_decrypt(urldecode($key), $decrypted, $keypair['publickey'])) {
+            print_error('decoderror', 'auth_ticket');
+        }
     } else {
-        $decrypted = 'encryption error';
+        $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0,32);
+        $sql = "
+            SELECT
+                AES_DECRYPT(UNHEX(?), ?) as result
+        ";
+    
+        if ($result = $DB->get_record_sql($sql, array($encrypted, $pkey))) {
+            $decrypted = $result->result;
+        } else {
+            $decrypted = 'encryption error';
+        }
     }
 
-    if (debugging() && function_exists('debug_trace')){
+    if (debugging() && function_exists('debug_trace')) {
         debug_trace(str_replace('/', "\\/", $decrypted));
     }
 
-    if (!$ticket = json_decode(str_replace('/', "\\/", $decrypted))){
+    if (!$ticket = json_decode(str_replace('/', "\\/", $decrypted))) {
         error("Ticket deserializing error");
     }
-    
+
     return $ticket;
 }
 
 /**
-* gives the timeguard of the ticket.
-*
-*/
-function ticket_get_timeguard(){
+ * gives the timeguard of the ticket.
+ *
+ */
+function ticket_get_timeguard() {
     return set_config('tickettimeguard', 'auth/ticket');
 }
-
-?>
