@@ -54,6 +54,7 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
         // Get rid of placeholder if not used.
         $notification = str_replace('<%%TICKET%%>', '', $notification_html);
     }
+
     // Tickets only can be sent as HTML href values.
     $notification = str_replace('<%%TICKET%%>', '', $notification);
 

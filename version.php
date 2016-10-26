@@ -17,20 +17,19 @@
 /**
  * Version details
  *
- * @package     auth_ticket
- * @category    auth
- * @author      Valery Fremaux <valery.fremaux@gmail.com>
- * @copyright   2012 Valery Fremaux (http://www.mylearningfactory.com)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    auth_ticket
+ * @category   auth
+ * @author     valery.fremaux@gmail.com 
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->version   = 2016040300;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015111100;        // Requires this Moodle version
+$plugin->requires  = 2016051900;        // Requires this Moodle version
 $plugin->component = 'auth_ticket';      // Full name of the plugin (used for diagnostics)
-$plugin->release = "3.0.0 (Build 2016040300)";
+$plugin->release = "3.1.0 (Build 2016040300)";
 $plugin->maturity = MATURITY_RC;      // Full name of the plugin (used for diagnostics)
 
 // Non moodle attributes.
-$plugin->codeincrement = '3.0.0000';
+$plugin->codeincrement = '3.1.0000';
