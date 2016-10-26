@@ -30,3 +30,6 @@ $plugin->requires  = 2016051900;        // Requires this Moodle version
 $plugin->component = 'auth_ticket';      // Full name of the plugin (used for diagnostics)
 $plugin->release = "3.1.0 (Build 2016040300)";
 $plugin->maturity = MATURITY_RC;      // Full name of the plugin (used for diagnostics)
+
+// Non moodle attributes.
+$plugin->codeincrement = '3.1.0000';

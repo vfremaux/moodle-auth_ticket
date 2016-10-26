@@ -47,8 +47,13 @@ defined('MOODLE_INTERNAL') || die;
 function ticket_notify($recipient, $sender, $title, $notification, $notification_html, $url, $purpose = '') {
     global $CFG;
 
-    $ticket = ticket_generate($recipient, $purpose, $url);
-    $notification_html = str_replace('<%%TICKET%%>', $ticket, $notification_html);
+    if (!empty($url)) {
+        $ticket = ticket_generate($recipient, $purpose, $url);
+        $notification_html = str_replace('<%%TICKET%%>', $ticket, $notification_html);
+    } else {
+        // Get rid of placeholder if not used.
+        $notification = str_replace('<%%TICKET%%>', '', $notification_html);
+    }
 
     // Tickets only can be sent as HTML href values.
     $notification = str_replace('<%%TICKET%%>', '', $notification);
@@ -103,6 +108,8 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
 function ticket_generate($user, $reason, $url, $method = 'des') {
     global $CFG, $DB;
 
+    if (empty($user->username)) return;
+
     $ticket = new StdClass();
     $ticket->username = $user->username;
     $ticket->reason = $reason;
@@ -111,22 +118,22 @@ function ticket_generate($user, $reason, $url, $method = 'des') {
 
     $keyinfo = json_encode($ticket);
 
-    if ($method == 'rsa'){
+    if ($method == 'rsa') {
 
         include_once $CFG->dirroot.'/mnet/lib.php';
         $keypair = mnet_get_keypair();
 
-        if(!openssl_private_encrypt($ticket, $encrypted, $keypair['privatekey'])){
+        if (!openssl_private_encrypt($ticket, $encrypted, $keypair['privatekey'])) {
             print_error("Failed making encoded ticket");
         }
     } else {
-        $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0,32);    
+        $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0,32);
         $sql = "
             SELECT
                 HEX(AES_ENCRYPT(?, ?)) as result
         ";
 
-        if($result = $DB->get_record_sql($sql, array($keyinfo, $pkey))){
+        if ($result = $DB->get_record_sql($sql, array($keyinfo, $pkey))) {
             $encrypted = $result->result;
         } else {
             $encrypted = 'encryption error';
@@ -140,7 +147,7 @@ function ticket_generate($user, $reason, $url, $method = 'des') {
  * decodes a direct access ticket for this user.
  * @param string $encrypted the received ticket
  */
-function ticket_decodeTicket($encrypted, $method = 'des') {
+function ticket_decode($encrypted, $method = 'des') {
     global $CFG, $DB;
 
     $encrypted = base64_decode($encrypted);
@@ -149,7 +156,7 @@ function ticket_decodeTicket($encrypted, $method = 'des') {
         /* using RSA */
 
         include_once $CFG->dirroot.'/mnet/lib.php';
-        $keypair = mnet_get_keypair();    
+        $keypair = mnet_get_keypair();
 
         if (!openssl_public_decrypt(urldecode($key), $decrypted, $keypair['publickey'])) {
             print_error('decoderror', 'auth_ticket');
