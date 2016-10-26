@@ -101,7 +101,7 @@ class auth_plugin_ticket extends auth_plugin_base{
     *
     */
     function loginpage_hook() { 
-        global $SESSION, $USER, $DB;       
+        global $USER, $DB;
         global $frm; // we must catch the login/index.php $user credential holder.
         global $user;
 
@@ -118,7 +118,7 @@ class auth_plugin_ticket extends auth_plugin_base{
             return false;
         }
 
-        $ticket = ticket_decodeTicket($sealedticket);
+        $ticket = ticket_decode($sealedticket);
 
         if (!empty($ticket)){
             if ($ticket->date < time() - $config->tickettimeguard){
@@ -128,8 +128,8 @@ class auth_plugin_ticket extends auth_plugin_base{
             $user = $DB->get_record('user', array('username' => $ticket->username, 'deleted' => 0));
 
             $user = $USER = complete_user_login($user);
-
-            redirect($ticket->wantsurl);
+            $url = str_replace('\\', '', $ticket->wantsurl);
+            redirect($url);
         }
         return false;
     }
