@@ -15,18 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Version details.
  *
- * @package    auth_ticket
- * @category   auth
- * @author     valery.fremaux@gmail.com 
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     auth_ticket
+ * @category    auth
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
+ * @copyright   2012 Valery Fremaux (http://www.mylearningfactory.com)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2012060400;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014110400;        // Requires this Moodle version
-$plugin->component = 'auth_ticket';      // Full name of the plugin (used for diagnostics)
-$plugin->maturity = MATURITY_RC;      // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2012060400;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2014110400;        // Requires this Moodle version.
+$plugin->component = 'auth_ticket';      // Full name of the plugin (used for diagnostics).
+$plugin->maturity = MATURITY_RC;
 $plugin->release = '2.8.0 (Build 2012060400)';
+
+// Non moodle attributes.
+$plugin->codeincrement = '2.8.0000';
