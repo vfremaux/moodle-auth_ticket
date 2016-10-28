@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * @package auth_ticket
  * @category auth
@@ -26,6 +24,8 @@ defined('MOODLE_INTERNAL') || die;
  *
  * implements an external access with encrypted access ticket for notification returns
  */
+defined('MOODLE_INTERNAL') || die;
+
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->dirroot.'/auth/ticket/lib.php');
 

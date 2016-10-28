@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * @package auth_ticket
  * @category auth
@@ -26,6 +24,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * Ticket related library
  */
+defined('MOODLE_INTERNAL') || die;
 
 /**
 * simple sending to user with return ticket.
@@ -76,7 +75,7 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
  * @param string $purpose
  */
 function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notification_html, $url, $purpose = '') {
-    global $CFG, $USER, $DB;
+    global $CFG, $DB;
 
     // Get all users assigned to that role in context.
     $role = $DB->get_record('role', array('id' => $roleid));
@@ -150,14 +149,14 @@ function ticket_decode($encrypted, $method = 'des') {
     global $CFG, $DB;
 
     $encrypted = base64_decode($encrypted);
-        
-    if ($method == 'rsa'){
-        /* using RSA */
+
+    if ($method == 'rsa') {
+        // using RSA.
 
         include_once $CFG->dirroot.'/mnet/lib.php';
         $keypair = mnet_get_keypair();
 
-        if (!openssl_public_decrypt(urldecode($key), $decrypted, $keypair['publickey'])) {
+        if (!openssl_public_decrypt(urldecode($encrypted), $decrypted, $keypair['publickey'])) {
             print_error('decoderror', 'auth_ticket');
         }
     } else {
