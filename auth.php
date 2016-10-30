@@ -37,7 +37,7 @@ class auth_plugin_ticket extends auth_plugin_base{
     /**
      * Constructor.
      */
-    function auth_plugin_ticket() {
+    public function __construct() {
         $this->authtype = 'ticket';
         $this->config = get_config('auth/ticket');
     }
@@ -49,10 +49,9 @@ class auth_plugin_ticket extends auth_plugin_base{
      *
      * @return bool Authentication success or failure.
      */
-    function user_login($username, $password) {
-        global $CFG, $SESSION, $USER;
+    public function user_login($username, $password) {
 
-        // if everything failed, we let the next authentication plugin play
+        // If everything failed, we let the next authentication plugin play.
         return false; // error("Remote MNET users cannot login locally.");
     }
     
@@ -61,7 +60,7 @@ class auth_plugin_ticket extends auth_plugin_base{
      *
      * @return bool
      */
-    function is_internal() {
+    public function is_internal() {
         return false;
     }
 
@@ -73,10 +72,10 @@ class auth_plugin_ticket extends auth_plugin_base{
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err, $user_fields) {
+    public function config_form($config, $err, $user_fields) {
         global $CFG;
 
-        include "config.html";
+        include($CFG->dirroot.'/auth/ticket/config.html');
     }
 
     /**
@@ -85,24 +84,23 @@ class auth_plugin_ticket extends auth_plugin_base{
      *
      * @param object $config Configuration object
      */
-    function process_config($config) {
-        global $CFG;
+    public function process_config($config) {
 
-        // set to defaults if undefined
-        $config->tickettimeguard = ($config->tickettimeguard) ? $config->tickettimeguard * HOURSECS : HOURSECS * 24 ;
-        // save settings
+        // Set to defaults if undefined.
+        $config->tickettimeguard = ($config->tickettimeguard) ? $config->tickettimeguard * HOURSECS : HOURSECS * 24;
+        // Save settings.
         set_config('tickettimeguard', $config->tickettimeguard, 'auth/ticket');
 
         return true;
     }
 
     /**
-    * we do not propose any hooking for explicit login page
-    *
-    */
-    function loginpage_hook() { 
+     * we do not propose any hooking for explicit login page
+     *
+     */
+    public function loginpage_hook() { 
         global $USER, $DB;
-        global $frm; // we must catch the login/index.php $user credential holder.
+        global $frm; // We must catch the login/index.php $user credential holder.
         global $user;
 
         $config = get_config('auth/ticket');
@@ -120,8 +118,8 @@ class auth_plugin_ticket extends auth_plugin_base{
 
         $ticket = ticket_decode($sealedticket);
 
-        if (!empty($ticket)){
-            if ($ticket->date < time() - $config->tickettimeguard){
+        if (!empty($ticket)) {
+            if ($ticket->date < time() - $config->tickettimeguard) {
                 return false;
             }
 
@@ -135,10 +133,9 @@ class auth_plugin_ticket extends auth_plugin_base{
     }
 
     /**
-    *
-    *
-    */
-    function logoutpage_hook() {
-        global $USER, $CFG, $redirect;
+     *
+     */
+    public function logoutpage_hook() {
+        return;
     }
 }

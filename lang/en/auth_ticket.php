@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package auth_ticket
- * @category auth
- * @author     Valery Fremaux <valery@valeisti.fr>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- * @copyright  (C) 2010 ValEISTI (http://www.valeisti.fr)
+ * @package     auth_ticket
+ * @category    auth
+ * @author      Valery Fremaux <valery@valeisti.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @copyright   (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
  */
 
 $string['pluginname'] = 'Ticket direct access';
@@ -31,6 +31,7 @@ $string['tickettimeguard'] = 'Validity period (hours)';
 $string['configtickettimeguard'] = 'Defines the validity delay for the ticket. After this delay the ticket is refused.';
 $string['decodeerror'] = 'Failed reading ticket';
 $string['encodeerror'] = 'Failed encoding ticket';
+$string['ticketerror'] = 'Ticket deserializing error';
 
 $string['no'] = 'No';
 $string['yes'] = 'Yes (more compatible)';
