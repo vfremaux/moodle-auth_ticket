@@ -52,9 +52,9 @@ class auth_plugin_ticket extends auth_plugin_base{
     public function user_login($username, $password) {
 
         // If everything failed, we let the next authentication plugin play.
-        return false; // error("Remote MNET users cannot login locally.");
+        return false;
     }
-    
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
@@ -72,7 +72,7 @@ class auth_plugin_ticket extends auth_plugin_base{
      *
      * @param array $page An object containing all the data for this page.
      */
-    public function config_form($config, $err, $user_fields) {
+    public function config_form($config, $err, $userfields) {
         global $CFG;
 
         include($CFG->dirroot.'/auth/ticket/config.html');
@@ -98,7 +98,7 @@ class auth_plugin_ticket extends auth_plugin_base{
      * we do not propose any hooking for explicit login page
      *
      */
-    public function loginpage_hook() { 
+    public function loginpage_hook() {
         global $USER, $DB;
         global $frm; // We must catch the login/index.php $user credential holder.
         global $user;

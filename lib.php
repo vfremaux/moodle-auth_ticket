@@ -47,7 +47,7 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
 
     if (!empty($url)) {
         $ticket = ticket_generate($recipient, $purpose, $url);
-        $notification_html = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
+        $notificationhtml = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
     } else {
         // Get rid of placeholder if not used.
         $notification = str_replace('<%%TICKET%%>', '', $notificationhtml);
@@ -84,7 +84,7 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
         $user = $DB->get_record('user', array('id' => $assign->userid), 'id,'.get_all_user_name_fields(true, ''));
         $ticket = ticket_generate($user, $purpose, $url);
         $notification = str_replace('<%%TICKET%%>', $ticket, $notification);
-        $notification_html = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
+        $notificationhtml = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
 
         // Todo send the email to user.
         if ($CFG->debugsmtp) {
