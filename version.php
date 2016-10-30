@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Version details.
  *
  * @package     auth_ticket
  * @category    auth
@@ -26,11 +26,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2016040300;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015111100;        // Requires this Moodle version
-$plugin->component = 'auth_ticket';      // Full name of the plugin (used for diagnostics)
-$plugin->release = "3.0.0 (Build 2016040300)";
-$plugin->maturity = MATURITY_RC;      // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2016040300;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2015111100;        // Requires this Moodle version.
+$plugin->component = 'auth_ticket';      // Full name of the plugin (used for diagnostics).
+$plugin->release = '3.0.0 (Build 2016040300)';
+$plugin->maturity = MATURITY_RC;
 
 // Non moodle attributes.
 $plugin->codeincrement = '3.0.0000';
