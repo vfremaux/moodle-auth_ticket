@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// set to defaults if undefined
+// Set to defaults if undefined.
 
 if (!isset($config->tickettimeguard)) {
     $config->tickettimeguard = HOURSECS * 24;
@@ -39,11 +39,11 @@ if (!isset($config->tickettimeguard)) {
 <tr valign="top" class="required">
     <td align="right"><?php print_string('usessl', 'auth_ticket'); ?>: </td>
     <td>
-    	<?php 
-    	$encryptoptions[0] = get_string('no', 'auth_ticket');
-    	$encryptoptions[1] = get_string('yes', 'auth_ticket');
-    	echo html_writer::select('usessl', $encryptoptions, $config->usessl);
-    	?>
+        <?php
+        $encryptoptions[0] = get_string('no', 'auth_ticket');
+        $encryptoptions[1] = get_string('yes', 'auth_ticket');
+        echo html_writer::select('usessl', $encryptoptions, $config->usessl);
+        ?>
     </td>
     <td>
         <?php print_string('configticketusesssl', 'auth_ticket'); ?>
