@@ -81,7 +81,7 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
     $assigns = get_users_from_role_on_context($role, $context);
 
     foreach ($assigns as $assign) {
-        $user = $DB->get_record('user', array('id' => $assign->userid), 'id,'.get_all_user_name_fields(true, ''));
+        $user = $DB->get_record('user', array('id' => $assign->userid), 'id, email, mailformat,'.get_all_user_name_fields(true, ''));
         $ticket = ticket_generate($user, $purpose, $url);
         $notification = str_replace('<%%TICKET%%>', $ticket, $notification);
         $notificationhtml = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
