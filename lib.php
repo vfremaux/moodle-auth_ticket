@@ -59,7 +59,7 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
     if ($CFG->debugsmtp) {
         echo "Sending Mail Notification to " . fullname($recipient) .'<br/>'.$notificationhtml;
     }
-    email_to_user($recipient, $sender, $title, $notification, $notificationhtml);
+    return email_to_user($recipient, $sender, $title, $notification, $notificationhtml);
 }
 
 /**
@@ -72,16 +72,19 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
  * @param string $notification_html
  * @param string $url
  * @param string $purpose
+ * @param bool $checksendall
+ * @return true if at least one email could be sent.
  */
-function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notificationhtml, $url, $purpose = '') {
+function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notificationhtml, $url, $purpose = '', $checksendall = false) {
     global $CFG, $DB;
 
     // Get all users assigned to that role in context.
     $role = $DB->get_record('role', array('id' => $roleid));
     $assigns = get_users_from_role_on_context($role, $context);
 
+    $result = $checksendall;
     foreach ($assigns as $assign) {
-        $user = $DB->get_record('user', array('id' => $assign->userid), 'id, email, mailformat,'.get_all_user_name_fields(true, ''));
+        $user = $DB->get_record('user', array('id' => $assign->userid), 'id, email, mailformat,'.get_all_user_name_fields(true, '').',email,emailstop');
         $ticket = ticket_generate($user, $purpose, $url);
         $notification = str_replace('<%%TICKET%%>', $ticket, $notification);
         $notificationhtml = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
@@ -90,9 +93,15 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
         if ($CFG->debugsmtp) {
             echo "Sending Mail Notification to ".fullname($user).'<br/>'.$notification;
         } else {
-            email_to_user($user, $sender, $title, $notification, $notificationhtml);
+            if ($checksendall) {
+                $result = $result && email_to_user($user, $sender, $title, $notification, $notificationhtml);
+            } else {
+                $result = $result || email_to_user($user, $sender, $title, $notification, $notificationhtml);
+            }
         }
     }
+
+    return $result;
 }
 
 /**
