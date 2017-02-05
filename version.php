@@ -26,11 +26,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2012060400;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2016040300;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2015050500;        // Requires this Moodle version.
 $plugin->component = 'auth_ticket';      // Full name of the plugin (used for diagnostics).
+$plugin->release = '2.9.0 (Build 2016040300)';
 $plugin->maturity = MATURITY_RC;
-$plugin->release = '2.9.0 (Build 2012060400)';
 
 // Non moodle attributes.
-$plugin->codeincrement = '2.9.0000';
+$plugin->codeincrement = '2.9.0001';
