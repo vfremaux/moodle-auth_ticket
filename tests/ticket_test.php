@@ -124,17 +124,18 @@ class auth_ticket_testcase extends advanced_testcase {
         $this->assertFalse($validate);
 
         // Test with RSA.
-        $reason = 'Self test';
-        $url = $CFG->wwwroot;
-
-        $ticket = ticket_generate($user, $reason, $url, 'rsa', 'short');
-        $decoded = ticket_decode($ticket, 'rsa');
-        $this->assertTrue($decoded != null);
-        $this->assertEquals($user->username, $decoded->username);
-        $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
-        $this->assertEquals($reason, $decoded->reason);
-        $this->assertEquals('short', $decoded->term);
-
+        if (function_exists('openssl_public_encrypt') && ($CFG->mnet_dispatcher_mode === 'strict')) {
+            $reason = 'Self test';
+            $url = $CFG->wwwroot;
+    
+            $ticket = ticket_generate($user, $reason, $url, 'rsa', 'short');
+            $decoded = ticket_decode($ticket, 'rsa');
+            $this->assertTrue($decoded != null);
+            $this->assertEquals($user->username, $decoded->username);
+            $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
+            $this->assertEquals($reason, $decoded->reason);
+            $this->assertEquals('short', $decoded->term);
+        }
     }
 
     /**
