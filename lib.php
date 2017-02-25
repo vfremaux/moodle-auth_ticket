@@ -142,7 +142,7 @@ function ticket_generate($user, $reason, $url, $method = 'des', $term = 'short')
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
 
-        if (!openssl_private_encrypt($keyinfo, $encrypted, $keypair['privatekey'])) {
+        if (!openssl_public_encrypt($keyinfo, $encrypted, $keypair['publickey'])) {
             print_error("Failed making encoded ticket");
         }
     } else {
@@ -180,7 +180,7 @@ function ticket_decode($encrypted, $method = 'des') {
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
 
-        if (!openssl_public_decrypt(urldecode($encrypted), $decrypted, $keypair['publickey'])) {
+        if (!openssl_private_decrypt(urldecode($encrypted), $decrypted, $keypair['privatekey'])) {
             print_error('decoderror', 'auth_ticket');
         }
     } else {
