@@ -30,6 +30,26 @@ defined('MOODLE_INTERNAL') || die();
  */
 class auth_ticket_testcase extends advanced_testcase {
 
+    /** @var auth_plugin_manual Keeps the authentication plugin. */
+    protected $authplugin;
+
+    /** @var stdClass Keeps authentication plugin config */
+    protected $config;
+
+    /**
+     * Setup test data.
+     */
+    protected function setUp() {
+        $this->resetAfterTest(true);
+        $this->authplugin = new auth_plugin_ticket();
+        $this->config = new stdClass();
+        $this->config->tickettimeguard = 24;
+        $this->config->logtermtickettimeguard = 90;
+        $this->config->usessl = 0;
+        $this->authplugin->process_config($this->config);
+        $this->authplugin->config = get_config(auth_plugin_ticket::COMPONENT_NAME);
+    }
+
     /**
      * Tests encryption/decrypt
      */
@@ -40,7 +60,6 @@ class auth_ticket_testcase extends advanced_testcase {
 
         /** @var auth_plugin_db $auth */
         $auth = get_auth_plugin('ticket');
-        $config = get_config(auth_plugin_ticket::COMPONENT_NAME);
 
         // Generate some test users.
         $user = $this->getDataGenerator()->create_user();
@@ -63,7 +82,7 @@ class auth_ticket_testcase extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $config->tickettimeguard * HOURSECS + 10;
+        $decoded->date -= $this->config->tickettimeguard * HOURSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -80,7 +99,7 @@ class auth_ticket_testcase extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $config->longtermtickettimeguard * DAYSECS + 10;
+        $decoded->date -= $this->config->longtermtickettimeguard * DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
