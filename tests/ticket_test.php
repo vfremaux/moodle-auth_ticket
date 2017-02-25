@@ -127,7 +127,7 @@ class auth_ticket_testcase extends advanced_testcase {
         if (function_exists('openssl_public_encrypt') && ($CFG->mnet_dispatcher_mode === 'strict')) {
             $reason = 'Self test';
             $url = $CFG->wwwroot;
-    
+
             $ticket = ticket_generate($user, $reason, $url, 'rsa', 'short');
             $decoded = ticket_decode($ticket, 'rsa');
             $this->assertTrue($decoded != null);
