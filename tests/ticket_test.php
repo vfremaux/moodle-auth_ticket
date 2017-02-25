@@ -30,6 +30,26 @@ defined('MOODLE_INTERNAL') || die();
  */
 class auth_ticket_testcase extends advanced_testcase {
 
+    /** @var auth_plugin_manual Keeps the authentication plugin. */
+    protected $authplugin;
+
+    /** @var stdClass Keeps authentication plugin config */
+    protected $config;
+
+    /**
+     * Setup test data.
+     */
+    protected function setUp() {
+        $this->resetAfterTest(true);
+        $this->authplugin = new auth_plugin_ticket();
+        $this->config = new stdClass();
+        $this->config->tickettimeguard = 24;
+        $this->config->logtermtickettimeguard = 90;
+        $this->config->usessl = 0;
+        $this->authplugin->process_config($this->config);
+        $this->authplugin->config = get_config(auth_plugin_ticket::COMPONENT_NAME);
+    }
+
     /**
      * Tests encryption/decrypt
      */
