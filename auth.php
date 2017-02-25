@@ -55,6 +55,8 @@ class auth_plugin_ticket extends auth_plugin_base {
      * are correct for local logins. Always returns false, as local users do not
      * need to login over mnet xmlrpc.
      *
+     * @param string $username
+     * @param string $password
      * @return bool Authentication success or failure.
      */
     public function user_login($username, $password) {
@@ -78,7 +80,9 @@ class auth_plugin_ticket extends auth_plugin_base {
      * This function is called from admin/auth.php, and outputs a full page with
      * a form for configuring this plugin.
      *
-     * @param array $page An object containing all the data for this page.
+     * @param object $config Configuration object
+     * @param array $err
+     * @param array $userfields
      */
     public function config_form($config, $err, $userfields) {
         global $CFG;
@@ -88,7 +92,6 @@ class auth_plugin_ticket extends auth_plugin_base {
 
     /**
      * Processes and stores configuration data for this authentication plugin.
-     *
      *
      * @param object $config Configuration object
      */
@@ -158,6 +161,11 @@ class auth_plugin_ticket extends auth_plugin_base {
         return;
     }
 
+    /**
+     * Checks the time validity of a ticket.
+     *
+     * @param objectref &$ticket
+     */
     public function validate_timeguard(&$ticket) {
 
         $config = get_config(self::COMPONENT_NAME);

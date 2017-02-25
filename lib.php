@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * simple sending to user with return ticket.
+ * Simple sending to user with return ticket.
  * The return ticket allows auser receiving amail to enter immediately
  * the platform being connected automatically during a hold time.
  * the ticket is catched by a custom auth module that decodes generated ticket and
@@ -66,7 +66,8 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
 }
 
 /**
- * send a notification message to all users having the role in the given context.
+ * Sends a notification message to all users having the role in the given context.
+ *
  * @param int $roleid id of the role to search users on
  * @param object $context context in which find users with the role
  * @param object $sender user identity of the sender
@@ -111,11 +112,14 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
 }
 
 /**
- * generates a direct access ticket for this user.
- * @param int $userid the ID of the user to whom the ticket must be made for
+ * Generates a direct access ticket for this user.
+ *
+ * @param object $user a user object
  * @param string $reason the reason of the ticket
  * @param string $url the access URL the user will be redirected to after validating his return ticket.
- * @TODO implement back an openssl alternative independant from DB special functions
+ * @param string $method the encryption algorithm, 'des' or 'rsa'.
+ * @param string $term the validity delay range in 'short', 'long', or 'persistance'.
+ * @return string an encrypted ticket
  */
 function ticket_generate($user, $reason, $url, $method = 'des', $term = 'short') {
     global $CFG, $DB;
@@ -138,7 +142,7 @@ function ticket_generate($user, $reason, $url, $method = 'des', $term = 'short')
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
 
-        if (!openssl_private_encrypt($keyinfo, $encrypted, $keypair['privatekey'])) {
+        if (!openssl_public_encrypt($keyinfo, $encrypted, $keypair['publickey'])) {
             print_error("Failed making encoded ticket");
         }
     } else {
@@ -159,9 +163,11 @@ function ticket_generate($user, $reason, $url, $method = 'des', $term = 'short')
 }
 
 /**
- * decodes a direct access ticket for this user.
+ * Decodes a direct access ticket for this user.
+ *
  * @param string $encrypted the received ticket
  * @param string $method the decrypt method. Supports 'des' using DB internal function or 'rsa' using openssl layer.
+ * @return a decoded ticket object
  */
 function ticket_decode($encrypted, $method = 'des') {
     global $CFG, $DB;
@@ -174,7 +180,7 @@ function ticket_decode($encrypted, $method = 'des') {
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
 
-        if (!openssl_public_decrypt(urldecode($encrypted), $decrypted, $keypair['publickey'])) {
+        if (!openssl_private_decrypt(urldecode($encrypted), $decrypted, $keypair['privatekey'])) {
             print_error('decoderror', 'auth_ticket');
         }
     } else {
