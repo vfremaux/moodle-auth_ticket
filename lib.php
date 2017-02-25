@@ -17,16 +17,17 @@
 /**
  * @package     auth_ticket
  * @category    auth
- * @author      Valery Fremaux <valery@valeisti.fr>
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
+ * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
  *
  * Ticket related library
  */
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * simple sending to user with return ticket.
+ * Simple sending to user with return ticket.
  * The return ticket allows auser receiving amail to enter immediately
  * the platform being connected automatically during a hold time.
  * the ticket is catched by a custom auth module that decodes generated ticket and
@@ -34,19 +35,21 @@ defined('MOODLE_INTERNAL') || die;
  * Only recipients that have a valid Moodle account can use an access tickets.
  * The ticket is only valid on the given return URL and cannot be used for going
  * to another location, unless user's profile other mention.
+ *
  * @param object $recipient
  * @param object $sender
- * @param string $title
- * @param string $notification
- * @param string $notification_html
- * @param string $url
- * @param string $purpose
+ * @param string $title mail subject
+ * @param string $notification raw content of the mail
+ * @param string $notification_html html content of the mail
+ * @param string $url return url of the ticket
+ * @param string $purpose some textual comment on what the ticket was for
+ * @param bool $term the ticket validity duration, may be 'short', 'long' or 'persistant'.
  */
-function ticket_notify($recipient, $sender, $title, $notification, $notificationhtml, $url, $purpose = '') {
+function ticket_notify($recipient, $sender, $title, $notification, $notificationhtml, $url, $purpose = '', $term = 'short') {
     global $CFG;
 
     if (!empty($url)) {
-        $ticket = ticket_generate($recipient, $purpose, $url);
+        $ticket = ticket_generate($recipient, $purpose, $url, $term);
         $notificationhtml = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
     } else {
         // Get rid of placeholder if not used.
@@ -63,19 +66,22 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
 }
 
 /**
- * send a notification message to all users having the role in the given context.
- * @param int $roleid
- * @param object $context
- * @param object $sender
- * @param string $title
- * @param string $notification
- * @param string $notification_html
- * @param string $url
- * @param string $purpose
- * @param bool $checksendall
- * @return true if at least one email could be sent.
+ * Sends a notification message to all users having the role in the given context.
+ *
+ * @param int $roleid id of the role to search users on
+ * @param object $context context in which find users with the role
+ * @param object $sender user identity of the sender
+ * @param string $title mail subject
+ * @param string $notification raw content of the mail
+ * @param string $notification_html html content of the mail
+ * @param string $url return url of the ticket
+ * @param string $purpose some textual comment on what the ticket was for
+ * @param bool $checksendall if true, the function returns true if all the recipients were sucessfull
+ * @param bool $term the ticket validity duration, may be 'short', 'long' or 'persistant'.
+ * @return true if at least one email could be sent or all are sent depending on $checksendall.
  */
-function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notificationhtml, $url, $purpose = '', $checksendall = false) {
+function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notificationhtml, $url, $purpose = '',
+                           $checksendall = false, $term = 'short') {
     global $CFG, $DB;
 
     // Get all users assigned to that role in context.
@@ -84,8 +90,9 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
 
     $result = $checksendall;
     foreach ($assigns as $assign) {
-        $user = $DB->get_record('user', array('id' => $assign->userid), 'id, username,'.get_all_user_name_fields(true, '').', email, emailstop, mailformat');
-        $ticket = ticket_generate($user, $purpose, $url);
+        $fields = 'id, username,'.get_all_user_name_fields(true, '').', email, emailstop, mailformat';
+        $user = $DB->get_record('user', array('id' => $assign->userid), $fields);
+        $ticket = ticket_generate($user, $purpose, $url, $term);
         $notification = str_replace('<%%TICKET%%>', $ticket, $notification);
         $notificationhtml = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
 
@@ -105,13 +112,16 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
 }
 
 /**
- * generates a direct access ticket for this user.
- * @param int $userid the ID of the user to whom the ticket must be made for
+ * Generates a direct access ticket for this user.
+ *
+ * @param object $user a user object
  * @param string $reason the reason of the ticket
  * @param string $url the access URL the user will be redirected to after validating his return ticket.
- * @TODO implement back an openssl alternative independant from DB special functions
+ * @param string $method the encryption algorithm, 'des' or 'rsa'.
+ * @param string $term the validity delay range in 'short', 'long', or 'persistance'.
+ * @return string an encrypted ticket
  */
-function ticket_generate($user, $reason, $url, $method = 'des') {
+function ticket_generate($user, $reason, $url, $method = 'des', $term = 'short') {
     global $CFG, $DB;
 
     if (empty($user->username)) {
@@ -121,7 +131,8 @@ function ticket_generate($user, $reason, $url, $method = 'des') {
     $ticket = new StdClass();
     $ticket->username = $user->username;
     $ticket->reason = $reason;
-    $ticket->wantsurl = $url;
+    $ticket->wantsurl = ''.$url; // Ensure we stringify.
+    $ticket->term = $term;
     $ticket->date = time();
 
     $keyinfo = json_encode($ticket);
@@ -131,7 +142,7 @@ function ticket_generate($user, $reason, $url, $method = 'des') {
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
 
-        if (!openssl_private_encrypt($ticket, $encrypted, $keypair['privatekey'])) {
+        if (!openssl_private_encrypt($keyinfo, $encrypted, $keypair['privatekey'])) {
             print_error("Failed making encoded ticket");
         }
     } else {
@@ -152,8 +163,11 @@ function ticket_generate($user, $reason, $url, $method = 'des') {
 }
 
 /**
- * decodes a direct access ticket for this user.
+ * Decodes a direct access ticket for this user.
+ *
  * @param string $encrypted the received ticket
+ * @param string $method the decrypt method. Supports 'des' using DB internal function or 'rsa' using openssl layer.
+ * @return a decoded ticket object
  */
 function ticket_decode($encrypted, $method = 'des') {
     global $CFG, $DB;
@@ -192,12 +206,4 @@ function ticket_decode($encrypted, $method = 'des') {
     }
 
     return $ticket;
-}
-
-/**
- * gives the timeguard of the ticket.
- *
- */
-function ticket_get_timeguard() {
-    return set_config('tickettimeguard', 'auth/ticket');
 }
