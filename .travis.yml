@@ -12,7 +12,6 @@ php:
 env:
  matrix:
   - DB=mysqli MOODLE_BRANCH=MOODLE_27_STABLE
-  - DB=pgsql MOODLE_BRANCH=MOODLE_27_STABLE
 
 
 before_install:
