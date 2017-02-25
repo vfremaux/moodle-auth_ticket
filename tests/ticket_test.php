@@ -25,6 +25,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/auth/ticket/auth.php');
+
 /**
  * Test case for the plugin.
  */
