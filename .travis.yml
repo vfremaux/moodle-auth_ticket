@@ -13,7 +13,6 @@ php:
 env:
  matrix:
   - DB=mysqli MOODLE_BRANCH=MOODLE_30_STABLE
-  - DB=pgsql MOODLE_BRANCH=MOODLE_30_STABLE
 
 
 before_install:
@@ -36,5 +35,5 @@ script:
 #  - moodle-plugin-ci shifter
   - moodle-plugin-ci jshint
   - moodle-plugin-ci validate
-#  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci phpunit
 #  - moodle-plugin-ci behat
