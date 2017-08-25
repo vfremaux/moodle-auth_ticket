@@ -197,10 +197,6 @@ function ticket_decode($encrypted, $method = 'des') {
         }
     }
 
-    if (debugging() && function_exists('debug_trace')) {
-        debug_trace(str_replace('/', "\\/", $decrypted));
-    }
-
     if (!$ticket = json_decode(str_replace('/', "\\/", $decrypted))) {
         print_error('ticketerror', 'auth_ticket');
     }
