@@ -43,3 +43,6 @@ $string['tickettimeguard'] = 'Temps de validité du ticket court (en heures)&nbs
 $string['usessl'] = 'Utiliser SSL pour crypter le ticket&nbsp;';
 $string['yes'] = 'Oui (plus compatible)';
 
+$string['auth_ticketdescription'] = 'Ce mode d\'authentification permet à des utilisteurs ayant reçu une notification par courriel de se
+connecter directement sur leur compte sans passer par la page de login. Le ticket crypté leur ayant été transmis contient toutes les
+informations suffisantes de login pendant une certaine durée de temps de validité. Au delà de cette durée le ticket est perdu.';

@@ -42,4 +42,10 @@ $string['tickettimeguard'] = 'Validity period (hours)';
 $string['usessl'] = 'Ticket encrypt method uses ssl';
 $string['yes'] = 'Yes (more compatible)';
 
+<<<<<<< HEAD
+=======
+$string['auth_ticketdescription'] = 'This authentication mode allows uers to log in again on Moodle directly from a notification
+message they have received by mail. The encrypted ticket contains all necessay infomation to identify the user and know what comeback url
+is asked for.';
+>>>>>>> MOODLE_33_STABLE
 
