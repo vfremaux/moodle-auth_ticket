@@ -12,11 +12,7 @@ php:
 
 env:
  matrix:
-<<<<<<< HEAD
-  - DB=mysqli MOODLE_BRANCH=MOODLE_32_STABLE
-=======
   - DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
->>>>>>> MOODLE_33_STABLE
 
 
 before_install:
