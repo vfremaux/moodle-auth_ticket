@@ -15,23 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * LDAP enrolment plugin settings and presets.
  *
- * @package     auth_ticket
- * @category    auth
+ * @package    auth_ticket
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017022500;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2016051900;        // Requires this Moodle version.
-$plugin->component = 'auth_ticket';     // Full name of the plugin (used for diagnostics).
-$plugin->release = '3.1.0 (Build 2017022500)';
-$plugin->maturity = MATURITY_RC;
+if ($ADMIN->fulltree) {
 
-// Non moodle attributes.
-$plugin->codeincrement = '3.1.0003';
+    $key = 'auth_ticket/encryption';
+    $label = get_string('configencryption', 'auth_ticket');
+    $desc = get_string('configencryption_desc', 'auth_ticket');
+    $default = 'des';
+    $encoptions = array('aes' => 'AES (openssl)',
+                        'des' => 'DES (Mysql only)');
+    $settings->add(new admin_setting_configselect($key, $label, $desc, $default, $encoptions));
+
+}

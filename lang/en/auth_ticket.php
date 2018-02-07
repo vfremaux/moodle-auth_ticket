@@ -40,6 +40,10 @@ $string['ticketerror'] = 'Ticket deserializing error';
 $string['tickettimeguard'] = 'Validity period (hours)';
 $string['usessl'] = 'Ticket encrypt method uses ssl';
 $string['yes'] = 'Yes (more compatible)';
+$string['configencryption'] = 'Encryption method';
+
+$string['configencryption_desc'] = 'DES is simple method and uses a native Mysql function. This is not available on other databases. AES is not database
+dependant, but requires openssl being installed and configures on the server.';
 
 $string['auth_ticketdescription'] = 'This authentication mode allows uers to log in again on Moodle directly from a notification
 message they have received by mail. The encrypted ticket contains all necessay infomation to identify the user and know what comeback url

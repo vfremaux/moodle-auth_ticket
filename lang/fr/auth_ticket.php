@@ -41,6 +41,11 @@ $string['ticketerror'] = 'Erreur de désérialisaton du ticket';
 $string['tickettimeguard'] = 'Temps de validité du ticket court (en heures)&nbsp;';
 $string['usessl'] = 'Utiliser SSL pour crypter le ticket&nbsp;';
 $string['yes'] = 'Oui (plus compatible)';
+$string['configencryption'] = 'Méthode de cryptage';
+
+$string['configencryption_desc'] = 'DES est une méthode plus simple et plus rapide, mais repose sur une fonction interne de Mysql.
+Elle ne fonctionnera pas sur d\'autres moteurs de base de données. AES n\'est pas lié aux bases de donnéesn, mais nécessite
+d\'avoir openssl installé sur le serveur.';
 
 $string['auth_ticketdescription'] = 'Ce mode d\'authentification permet à des utilisteurs ayant reçu une notification par courriel de se
 connecter directement sur leur compte sans passer par la page de login. Le ticket crypté leur ayant été transmis contient toutes les
