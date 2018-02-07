@@ -121,8 +121,14 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
  * @param string $term the validity delay range in 'short', 'long', or 'persistance'.
  * @return string an encrypted ticket
  */
-function ticket_generate($user, $reason, $url, $method = 'des', $term = 'short') {
+function ticket_generate($user, $reason, $url, $method = null, $term = 'short') {
     global $CFG, $DB;
+
+    $config = get_config('auth_ticket');
+
+    if (is_null($method)) {
+        $method = $config->encryption;
+    }
 
     if (empty($user->username)) {
         return;
@@ -169,8 +175,14 @@ function ticket_generate($user, $reason, $url, $method = 'des', $term = 'short')
  * @param string $method the decrypt method. Supports 'des' using DB internal function or 'rsa' using openssl layer.
  * @return a decoded ticket object
  */
-function ticket_decode($encrypted, $method = 'des') {
+function ticket_decode($encrypted, $method = null) {
     global $CFG, $DB;
+
+    $config = get_config('auth_ticket');
+
+    if (is_null($method)) {
+        $method = $config->encryption;
+    }
 
     $encrypted = base64_decode($encrypted);
 
