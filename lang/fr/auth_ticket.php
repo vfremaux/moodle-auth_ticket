@@ -26,7 +26,6 @@
  */
 
 $string['auth_ticket'] = 'Accès direct par ticket';
-$string['auth_ticketdescription'] = 'Ce mode d\'authentification permet à des utilisteurs ayant reçu une notification par courriel de se connecter directement sur leur compte sans passer par la page de login. Le ticket crypté leur ayant été transmis contient toutes les informations suffisantes de login pendant une certaine durée de temps de validité. Au delà de cette durée le ticket est perdu.';
 $string['auth_tickettitle'] = 'Accès direct par ticket';
 $string['configtesturl'] = 'Copiez cette url dans un navigateur non connecté.';
 $string['configlongtermtickettimeguard'] = 'Ce temps détermine la durée de validité d\'un ticket de notification à longue durée. Un accès avec un ticket plus âgé que cette durée est rejeté.';
