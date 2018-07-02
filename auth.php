@@ -99,12 +99,14 @@ class auth_plugin_ticket extends auth_plugin_base {
 
         if (!$config) {
             $config = new StdClass();
+            $config->tickettimeguard = 24;
+            $config->longtermtickettimeguard = 5;
         }
 
         // Set to defaults if undefined.
-        $conf = @$config->tickettimeguard * HOURSECS;
+        $conf = $config->tickettimeguard * HOURSECS;
         $config->tickettimeguard = (@$config->tickettimeguard) ? $conf : HOURSECS * 24;
-        $conf = @$config->longtermtickettimeguard * DAYSECS;
+        $conf = $config->longtermtickettimeguard * DAYSECS;
         $config->longtermtickettimeguard = (@$config->longtermtickettimeguard) ? $conf : DAYSECS * 90;
         $config->usessl = (isset($config->usessl)) ? $config->usessl : 1;
 
@@ -170,7 +172,11 @@ class auth_plugin_ticket extends auth_plugin_base {
 
         $config = get_config(self::COMPONENT_NAME);
 
-        switch (@$ticket->term) {
+        if (empty($ticket->term)) {
+            $ticket->term = 'short';
+        }
+
+        switch ($ticket->term) {
             case 'persistant': {
                 /*
                  * This is a passthrough. However, we consider that a 6 years old ticket
