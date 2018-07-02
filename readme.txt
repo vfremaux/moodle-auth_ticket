@@ -31,3 +31,7 @@ Install ticket auth
 ########################################
 Unpack the plugin under auth directory in Moodle codebase.
 Enable the ticket in the auth stack and raise it to a quite high position in the stack.
+
+2018070100 / X.X.0004
+==================
+Adding the "internal" method for encryption, when nothing else works... light XOR based, weak method by the way.
