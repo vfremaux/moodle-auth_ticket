@@ -122,7 +122,7 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
  * @return string an encrypted ticket
  */
 function ticket_generate($user, $reason, $url, $method = null, $term = 'short') {
-    global $CFG, $DB;
+    global $CFG, $DB, $SITE;
 
     $config = get_config('auth_ticket');
 
@@ -136,14 +136,36 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short') 
 
     $ticket = new StdClass();
     $ticket->username = $user->username;
-    $ticket->reason = $reason;
-    $ticket->wantsurl = ''.$url; // Ensure we stringify.
+    if (!empty($reason)) {
+        $ticket->reason = $reason;
+    }
+    if (!empty($url)) {
+        $ticket->wantsurl = ''.$url; // Ensure we stringify.
+    }
     $ticket->term = $term;
     $ticket->date = time();
 
     $keyinfo = json_encode($ticket);
 
-    if ($method == 'rsa') {
+    if ($method == 'internal') {
+
+        $key = $config->internalseed;
+        if (empty($config->internalseed)) {
+            $key = md5($SITE->fullname);
+        }
+
+        while (strlen($key) < strlen($keyinfo)) {
+            // Pad key onto itself to get a key larger than the text.
+            $key .= $key;
+        }
+
+        $encrypted = '';
+
+        // Iterate through each character
+        for ($i = 0; $i < strlen($keyinfo); $i++) {
+                $encrypted .= $keyinfo{$i} ^ $key{$i};
+        }
+    } else if ($method == 'rsa') {
 
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
@@ -152,7 +174,10 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short') 
             print_error("Failed making encoded ticket");
         }
     } else {
-        $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0, 32);
+        $pkey = '';
+        if (!empty($CFG->passwordsaltmain)) {
+            $pkey = substr(base64_encode($CFG->passwordsaltmain), 0, 16);
+        }
         $sql = "
             SELECT
                 HEX(AES_ENCRYPT(?, ?)) as result
@@ -176,7 +201,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short') 
  * @return a decoded ticket object
  */
 function ticket_decode($encrypted, $method = null) {
-    global $CFG, $DB;
+    global $CFG, $DB, $SITE;
 
     $config = get_config('auth_ticket');
 
@@ -186,17 +211,34 @@ function ticket_decode($encrypted, $method = null) {
 
     $encrypted = base64_decode($encrypted);
 
-    if ($method == 'rsa') {
+    if ($method == 'internal') {
+        $key = $config->internalseed;
+        if (empty($config->internalseed)) {
+            $key = md5($SITE->fullname);
+        }
+
+        while (strlen($key) < strlen($encrypted)) {
+            // Pad key onto itself to get a key larger than the text.
+            $key .= $key;
+        }
+
+        $decrypted = '';
+
+        // Iterate through each character
+        for ($i = 0; $i < strlen($encrypted); $i++) {
+            $decrypted .= $encrypted{$i} ^ $key{$i};
+        }
+    } else if ($method == 'rsa') {
         // Using RSA.
 
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
 
         if (!openssl_private_decrypt(urldecode($encrypted), $decrypted, $keypair['privatekey'])) {
-            print_error('decoderror', 'auth_ticket');
+            print_error('decoderror', 'auth_ticket', $method);
         }
     } else {
-        $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0, 32);
+        $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0, 16);
         $sql = "
             SELECT
                 AES_DECRYPT(UNHEX(?), ?) as result
@@ -210,7 +252,7 @@ function ticket_decode($encrypted, $method = null) {
     }
 
     if (!$ticket = json_decode(str_replace('/', "\\/", $decrypted))) {
-        print_error('ticketerror', 'auth_ticket');
+        print_error('ticketerror', 'auth_ticket', '', $method);
     }
 
     return $ticket;

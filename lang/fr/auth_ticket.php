@@ -37,13 +37,16 @@ $string['longtermtickettimeguard'] = 'Temps de validité du ticket long (en jour
 $string['no'] = 'Non (Mysql et MariaDB uniquement)';
 $string['pluginname'] = 'Accès direct par ticket';
 $string['testurl'] = 'Url de test';
-$string['ticketerror'] = 'Erreur de désérialisaton du ticket';
+$string['internal'] = 'Interne';
+$string['ticketerror'] = 'Erreur de désérialisaton du ticket (méthode {$a})';
 $string['tickettimeguard'] = 'Temps de validité du ticket court (en heures)&nbsp;';
 $string['usessl'] = 'Utiliser SSL pour crypter le ticket&nbsp;';
 $string['yes'] = 'Oui (plus compatible)';
 $string['configencryption'] = 'Méthode de cryptage';
+$string['configinternalseed'] = 'Clef interne';
+$string['configinternalseed_desc'] = 'Clef de cryptage interne';
 
-$string['configencryption_desc'] = 'DES estube méthod eplus simple et plus rapide, mais repose sur une fonction interne de Mysql.
+$string['configencryption_desc'] = 'DES est une méthode plus simple et plus rapide, mais repose sur une fonction interne de Mysql.
 Elle ne fonctionnera pas sur d\'autres moteurs de base de données. AES n\'est pas lié aux bases de donnéesn, mais nécessite
 d\'avoir openssl installé sur le serveur.';
 
