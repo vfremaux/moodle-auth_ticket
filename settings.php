@@ -32,8 +32,14 @@ if ($ADMIN->fulltree) {
     $label = get_string('configencryption', 'auth_ticket');
     $desc = get_string('configencryption_desc', 'auth_ticket');
     $default = 'des';
-    $encoptions = array('aes' => 'AES (openssl)',
-                        'des' => 'DES (Mysql only)');
+    $encoptions = array('internal' => get_string('internal', 'auth_ticket'),
+                        'rsa' => 'RSA (openssl)',
+                        'des' => 'AES/DES (Mysql only)');
     $settings->add(new admin_setting_configselect($key, $label, $desc, $default, $encoptions));
+
+    $key = 'auth_ticket/internalseed';
+    $label = get_string('configinternalseed', 'auth_ticket');
+    $desc = get_string('configinternalseed_desc', 'auth_ticket');
+    $settings->add(new admin_setting_configtext($key, $label, $desc, ''));
 
 }
