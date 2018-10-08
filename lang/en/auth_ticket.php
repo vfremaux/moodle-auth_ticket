@@ -23,6 +23,8 @@
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
  */
 
+$string['privacy:metadata'] = "The Auth ticket do not store any data belonging to users";
+
 $string['auth_ticket'] = 'Ticket direct access';
 $string['auth_tickettitle'] = 'Ticket direct access';
 $string['copytoclipboard'] = 'Copy check url';
