@@ -42,4 +42,19 @@ if ($ADMIN->fulltree) {
     $desc = get_string('configinternalseed_desc', 'auth_ticket');
     $settings->add(new admin_setting_configtext($key, $label, $desc, ''));
 
+    $key = 'auth_ticket/shortvaliditydelay';
+    $label = get_string('configshortvaliditydelay', 'auth_ticket');
+    $desc = get_string('configshortvaliditydelay_desc', 'auth_ticket');
+    $settings->add(new admin_setting_configtext($key, $label, $desc, ''));
+
+    $key = 'auth_ticket/longvaliditydelay';
+    $label = get_string('configlongvaliditydelay', 'auth_ticket');
+    $desc = get_string('configlongvaliditydelay_desc', 'auth_ticket');
+    $settings->add(new admin_setting_configtext($key, $label, $desc, ''));
+
+    $key = 'auth_ticket/persistantvaliditydelay';
+    $label = get_string('configpersistantvaliditydelay', 'auth_ticket');
+    $desc = get_string('configpersistantvaliditydelay_desc', 'auth_ticket');
+    $settings->add(new admin_setting_configtext($key, $label, $desc, ''));
+
 }
