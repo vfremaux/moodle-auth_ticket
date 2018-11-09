@@ -112,12 +112,16 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
 }
 
 /**
- * Generates a direct access ticket for this user.
+ * Generates a direct access ticket for this user. three generation methods are provided.
+ * - Internel : a weak method but does not relay on encryption libraries.
+ * - des : uses the Mysql DES encryption function. Will NOT work on other databases.
+ * - rsa : Uses Moodle MNET local key. Assumes we have initialized mnet. Care that the ticket may be 
+ * rejected if the key changes. This will have impact on 'persistance' or 'long' term tickets.
  *
  * @param object $user a user object
  * @param string $reason the reason of the ticket
  * @param string $url the access URL the user will be redirected to after validating his return ticket.
- * @param string $method the encryption algorithm, 'des' or 'rsa'.
+ * @param string $method the encryption algorithm, 'des' or 'rsa', or 'internal'.
  * @param string $term the validity delay range in 'short', 'long', or 'persistance'.
  * @return string an encrypted ticket
  */
@@ -256,4 +260,52 @@ function ticket_decode($encrypted, $method = null) {
     }
 
     return $ticket;
+}
+
+/**
+ * checks conditions for ticket internal data validity and initiate the $USER if ticket is valid.
+ * @param string $ticket
+ * @return true if ticket is accepted.
+ */
+function ticket_accept($ticket, &$gotourl = null) {
+    global $DB;
+
+    $config = get_config('auth_ticket');
+
+    switch ($ticket->term) {
+        case 'short' :
+            if ($ticket->date < time() - $config->shortvaliditydelay) {
+                return false;
+            }
+            break;
+
+        case 'long' :
+            if ($ticket->date < time() - $config->longvaliditydelay) {
+                return false;
+            }
+            break;
+
+        case 'persistant' :
+            if ($config->persistantvaliditydelay == 0) {
+                return true;
+            }
+            if ($ticket->date < time() - $config->persistantvaliditydelay) {
+                return false;
+            }
+            assert(1);
+    }
+
+    if (empty($ticket->username)) {
+        return false;
+    }
+
+    if (!$user = $DB->get_record('user', array('username' => $ticket->username))) {
+        return false;
+    }
+
+    $USER = $user;
+
+    $gotourl = @$ticket->wantsurl;
+
+    return true;
 }
