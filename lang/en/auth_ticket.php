@@ -28,13 +28,13 @@ $string['privacy:metadata'] = "The Auth ticket do not store any data belonging t
 $string['auth_ticket'] = 'Ticket direct access';
 $string['auth_tickettitle'] = 'Ticket direct access';
 $string['copytoclipboard'] = 'Copy check url';
-$string['configlongtermtickettimeguard'] = 'Defines the validity delay for the long term ticket. After this delay the ticket is refused.';
 $string['configtesturl'] = 'Copy this url into a non logged in browser.';
-$string['configtickettimeguard'] = 'Defines the validity delay for the ticket. After this delay the ticket is refused.';
+$string['configshortvaliditydelay'] = 'Short lifetime delay';
+$string['configlongvaliditydelay'] = 'Long lifetime delay';
+$string['configpersistantvaliditydelay'] = 'Persistant lifetime delay';
 $string['configticketusessl'] = 'If enabled, the openssl encrypt method is used. If not, the internal AES_ENCRYPT function of the database is used';
 $string['decodeerror'] = 'Failed reading ticket';
 $string['encodeerror'] = 'Failed encoding ticket';
-$string['longtermtickettimeguard'] = 'Validity period for long tickets (days)';
 $string['no'] = 'No (Mysql and MariaDB only)';
 $string['pluginname'] = 'Ticket direct access';
 $string['testurl'] = 'Test url';
@@ -46,7 +46,8 @@ $string['yes'] = 'Yes (more compatible)';
 $string['configencryption'] = 'Encryption method';
 $string['configrsaseed'] = 'RSA Seed';
 $string['configinternalseed'] = 'Internal seed';
-$string['configinternalseed_desc'] = 'Seed for the internal method';
+
+$string['configinternalseed_desc'] = 'Seed for the internal method. Should be set to an arbitrary value.';
 
 $string['configencryption_desc'] = 'DES is simple method and uses a native Mysql function. This is not available on other databases. AES is not database
 dependant, but requires openssl being installed and configures on the server.';
@@ -56,4 +57,13 @@ $string['configrsaseed_desc'] = 'An arbitrary secret string for encrypting and d
 $string['auth_ticketdescription'] = 'This authentication mode allows uers to log in again on Moodle directly from a notification
 message they have received by mail. The encrypted ticket contains all necessay infomation to identify the user and know what comeback url
 is asked for.';
+
+$string['configshortvaliditydelay_desc'] = 'Time of life of the short timelife ticket (in seconds). Short lifetime tickets should be used
+for immediate browseback into moodle.';
+
+$string['configlongvaliditydelay_desc'] = 'Time of life of the short timelife ticket (in seconds). Long lifetime tickets are usually used
+for browseback that are asynchronous and may be delayed for some days.';
+
+$string['configpersistantvaliditydelay_desc'] = 'Persistant delay can be 0 (no limit), or should be set to a very large amount of seconds.
+Note that ticket peristance may be altered by the MNET key renewal whenn using DSA cryting method.';
 

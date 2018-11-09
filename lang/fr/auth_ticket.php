@@ -24,16 +24,19 @@
  *
  * Implements an external access with encrypted access ticket for notification returns.
  */
+defined('MOODLE_INTERNAL') || die();
+
+$string['privacy:metadata'] = "Le plugin d\'authentification par ticket ne stocek aucune donnée liée à des utilisateurs.";
 
 $string['auth_ticket'] = 'Accès direct par ticket';
 $string['auth_tickettitle'] = 'Accès direct par ticket';
 $string['configtesturl'] = 'Copiez cette url dans un navigateur non connecté.';
-$string['configlongtermtickettimeguard'] = 'Ce temps détermine la durée de validité d\'un ticket de notification à longue durée. Un accès avec un ticket plus âgé que cette durée est rejeté.';
-$string['configtickettimeguard'] = 'Ce temps détermine la durée de validité d\'un ticket de notification. Un accès avec un ticket plus âgé que cette durée est rejeté.';
+$string['configshortvaliditydelay'] = 'Temps de validité des tickets courts';
+$string['configlongvaliditydelay'] = 'Temps de validité des tickets longs';
+$string['configpersistantvaliditydelay'] = 'Temps de validité des tickets persistants';
 $string['configticketusessl'] = 'Si oui, le ticket est crypté/décrypté en utilisant les librairies openssl du système. Si non, c\'est la fonction d\'encryption interne de la base de données qui sera utilisée.';
 $string['decodeerror'] = 'Erreur de lecture du ticket';
 $string['encodeerror'] = 'Erreur d\'encodage du ticket';
-$string['longtermtickettimeguard'] = 'Temps de validité du ticket long (en jours)&nbsp;';
 $string['no'] = 'Non (Mysql et MariaDB uniquement)';
 $string['pluginname'] = 'Accès direct par ticket';
 $string['testurl'] = 'Url de test';
@@ -53,3 +56,12 @@ d\'avoir openssl installé sur le serveur.';
 $string['auth_ticketdescription'] = 'Ce mode d\'authentification permet à des utilisteurs ayant reçu une notification par courriel de se
 connecter directement sur leur compte sans passer par la page de login. Le ticket crypté leur ayant été transmis contient toutes les
 informations suffisantes de login pendant une certaine durée de temps de validité. Au delà de cette durée le ticket est perdu.';
+
+$string['configshortvaliditydelay_desc'] = 'Durée de validité du ticket court (en secondes). Les tickets courts sont utilisés lorsque le délai de retour
+à Moodle à compter de la génération du ticket est connu comme étant court (retour immédiat ou synchrone).';
+
+$string['configlongvaliditydelay_desc'] = 'Durée de validité du ticket long (en secondes). Les tickets longs sont utilisés lorsque le délai de retour
+à Moodle à compter de la génération du ticket est connu comme étant long (retour asynchrone), en général quelques jours.';
+
+$string['configpersistantvaliditydelay_desc'] = 'La durée de persistance peut être illimitée (valeur 0), ou être réglée sur un nombre très grand de secondes.
+Notez des tickets persistants peuvent perdre leur validité si la méthode DSA (openssl) est utilisée en relation avec la valeur courante de la clef MNET.';
