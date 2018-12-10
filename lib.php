@@ -115,7 +115,7 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
  * Generates a direct access ticket for this user. three generation methods are provided.
  * - Internel : a weak method but does not relay on encryption libraries.
  * - des : uses the Mysql DES encryption function. Will NOT work on other databases.
- * - rsa : Uses Moodle MNET local key. Assumes we have initialized mnet. Care that the ticket may be 
+ * - rsa : Uses Moodle MNET local key. Assumes we have initialized mnet. Care that the ticket may be
  * rejected if the key changes. This will have impact on 'persistance' or 'long' term tickets.
  *
  * @param object $user a user object

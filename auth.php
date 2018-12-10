@@ -99,20 +99,24 @@ class auth_plugin_ticket extends auth_plugin_base {
 
         if (!$config) {
             $config = new StdClass();
-            $config->tickettimeguard = 24;
-            $config->longtermtickettimeguard = 5;
+            $config->shortvaliditydelay = 2;
+            $config->longvaliditydelay = 24;
+            $config->persistantvaliditydelay = 5;
         }
 
         // Set to defaults if undefined.
-        $conf = $config->tickettimeguard * HOURSECS;
-        $config->tickettimeguard = (@$config->tickettimeguard) ? $conf : HOURSECS * 24;
-        $conf = $config->longtermtickettimeguard * DAYSECS;
-        $config->longtermtickettimeguard = (@$config->longtermtickettimeguard) ? $conf : DAYSECS * 90;
+        $conf = $config->shortvaliditydelay * HOURSECS;
+        $config->shortvaliditydelay = (@$config->shortvaliditydelay) ? $conf : HOURSECS * 2;
+        $conf = $config->longvaliditydelay * HOURSECS;
+        $config->longvaliditydelay = (@$config->longvaliditydelay) ? $conf : HOURSECS * 24;
+        $conf = @$config->persistantvaliditydelay * DAYSECS;
+        $config->persistantvaliditydelay = (@$config->persistantvaliditydelay) ? $conf : DAYSECS * 90;
         $config->usessl = (isset($config->usessl)) ? $config->usessl : 1;
 
         // Save settings.
-        set_config('tickettimeguard', $config->tickettimeguard, self::COMPONENT_NAME);
-        set_config('longtermtickettimeguard', $config->longtermtickettimeguard, self::COMPONENT_NAME);
+        set_config('shortvaliditydelay', $config->shortvaliditydelay, self::COMPONENT_NAME);
+        set_config('longvaliditydelay', $config->longvaliditydelay, self::COMPONENT_NAME);
+        set_config('persistantvaliditydelay', $config->persistantvaliditydelay, self::COMPONENT_NAME);
         set_config('usessl', $config->usessl, self::COMPONENT_NAME);
 
         return true;
@@ -129,7 +133,7 @@ class auth_plugin_ticket extends auth_plugin_base {
 
         $config = get_config(self::COMPONENT_NAME);
 
-        if (empty($config->tickettimeguard)) {
+        if (empty($config->longvaliditydelay)) {
             // Ensure defaults are set.
             $this->process_config(null);
             $config = get_config(self::COMPONENT_NAME);
@@ -182,14 +186,14 @@ class auth_plugin_ticket extends auth_plugin_base {
                  * This is a passthrough. However, we consider that a 6 years old ticket
                  * might be an exterme limit.
                  */
-                if ($ticket->date < time() - (DAYSECS * 2000)) {
+                if ($ticket->date < (time() - $config->persistantvaliditydelay)) {
                     return false;
                 }
                 break;
             }
 
             case 'long': {
-                if ($ticket->date < time() - $config->longtermtickettimeguard) {
+                if ($ticket->date < (time() - $config->longvaliditydelay)) {
                     return false;
                 }
                 break;
@@ -197,7 +201,7 @@ class auth_plugin_ticket extends auth_plugin_base {
 
             case 'short':
             default :
-                if ($ticket->date < time() - $config->tickettimeguard) {
+                if ($ticket->date < (time() - $config->shortvaliditydelay)) {
                     return false;
                 }
         }
