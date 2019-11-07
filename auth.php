@@ -109,8 +109,12 @@ class auth_plugin_ticket extends auth_plugin_base {
         $config->shortvaliditydelay = (@$config->shortvaliditydelay) ? $conf : HOURSECS * 2;
         $conf = $config->longvaliditydelay * HOURSECS;
         $config->longvaliditydelay = (@$config->longvaliditydelay) ? $conf : HOURSECS * 24;
-        $conf = @$config->persistantvaliditydelay * DAYSECS;
-        $config->persistantvaliditydelay = (@$config->persistantvaliditydelay) ? $conf : DAYSECS * 90;
+        $conf = $config->persistantvaliditydelay * DAYSECS;
+        if (!isset($config->persistantvaliditydelay)) {
+            $config->persistantvaliditydelay = DAYSECS * 90;
+            set_config('persistantvaliditydelay', DAYSECS * 90, 'auth_ticket');
+        }
+        $config->persistantvaliditydelay = (isset($config->persistantvaliditydelay)) ? $conf : DAYSECS * 90;
         $config->usessl = (isset($config->usessl)) ? $config->usessl : 1;
 
         // Save settings.

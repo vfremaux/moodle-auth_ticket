@@ -32,9 +32,13 @@ if ($ADMIN->fulltree) {
     $label = get_string('configencryption', 'auth_ticket');
     $desc = get_string('configencryption_desc', 'auth_ticket');
     $default = 'des';
-    $encoptions = array('internal' => get_string('internal', 'auth_ticket'),
-                        'rsa' => 'RSA (openssl)',
-                        'des' => 'AES/DES (Mysql only)');
+    $encoptions = array('internal' => get_string('internal', 'auth_ticket'));
+    if ($CFG->mnet_dispatcher_mode == 'strict') {
+        $encoptions['rsa'] = 'RSA (openssl)';
+    }
+    if ($CFG->dbtype == 'mysqli' || $CFG->dbtype == 'mariadb') {
+        $encoptions['des'] = 'AES/DES (Mysql only)';
+    }
     $settings->add(new admin_setting_configselect($key, $label, $desc, $default, $encoptions));
 
     $key = 'auth_ticket/internalseed';
