@@ -68,6 +68,9 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
 /**
  * Sends a notification message to all users having the role in the given context.
  *
+ * Note that general form of URL to propose a return ticket encoded url is : 
+ * %WWWROOT%/login/index.php?ticket=%TICKET%
+ *
  * @param int $roleid id of the role to search users on
  * @param object $context context in which find users with the role
  * @param object $sender user identity of the sender
