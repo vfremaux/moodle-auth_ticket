@@ -91,9 +91,13 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
     $role = $DB->get_record('role', array('id' => $roleid));
     $assigns = get_users_from_role_on_context($role, $context);
 
+    // M4.
+    $fields = \core_user\fields::for_name()->get_required_fields();
+    $fields = 'u.id,'.implode(',', $fields);
+
     $result = $checksendall;
     foreach ($assigns as $assign) {
-        $fields = 'id, username,'.get_all_user_name_fields(true, '').', email, emailstop, mailformat';
+        $fields = 'id, '.$fields;
         $user = $DB->get_record('user', array('id' => $assign->userid), $fields);
         $ticket = ticket_generate($user, $purpose, $url, $term);
         $notification = str_replace('<%%TICKET%%>', $ticket, $notification);
