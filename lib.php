@@ -170,7 +170,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short') 
 
         // Iterate through each character
         for ($i = 0; $i < strlen($keyinfo); $i++) {
-                $encrypted .= $keyinfo{$i} ^ $key{$i};
+                $encrypted .= substr($keyinfo, $i, 1) ^ substr($key, $i, 1);
         }
     } else if ($method == 'rsa') {
 
@@ -233,7 +233,7 @@ function ticket_decode($encrypted, $method = null) {
 
         // Iterate through each character
         for ($i = 0; $i < strlen($encrypted); $i++) {
-            $decrypted .= $encrypted{$i} ^ $key{$i};
+            $decrypted .= substr($encrypted, $i, 1) ^ substr($key, $i, 1);
         }
     } else if ($method == 'rsa') {
         // Using RSA.

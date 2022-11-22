@@ -22,16 +22,18 @@
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
- * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
+ * @copyright   (C) 2012 onwards Valery Fremaux (https://www.mylearningfactory.com)
+ * @copyright   (C) 2015 onwards Valery Fremaux (https://www.activeprolearn.com)
  */
 
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->version   = 2018110900;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2019051100;        // Requires this Moodle version.
+$plugin->requires  = 2020060900;        // Requires this Moodle version.
 $plugin->component = 'auth_ticket';     // Full name of the plugin (used for diagnostics).
-$plugin->release = '3.7.0 (Build 2018110900)';
+$plugin->release = '3.9.0 (Build 2018110900)';
 $plugin->maturity = MATURITY_STABLE;
+$plugin->supported = [39, 311];
 
 // Non moodle attributes.
-$plugin->codeincrement = '3.7.0005';
+$plugin->codeincrement = '3.9.0005';
