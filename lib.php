@@ -125,10 +125,11 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
  * @param string $reason the reason of the ticket
  * @param string $url the access URL the user will be redirected to after validating his return ticket.
  * @param string $method the encryption algorithm, 'des' or 'rsa', or 'internal'.
- * @param string $term the validity delay range in 'short', 'long', or 'persistance'.
+ * @param string $term the validity delay range in 'short', 'long', or 'persistant'.
+ * @param string $expires the validity time in seconds.
  * @return string an encrypted ticket
  */
-function ticket_generate($user, $reason, $url, $method = null, $term = 'short') {
+function ticket_generate($user, $reason, $url, $method = null, $term = 'short', $expires = 0) {
     global $CFG, $DB, $SITE;
 
     $config = get_config('auth_ticket');
@@ -150,6 +151,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short') 
         $ticket->wantsurl = ''.$url; // Ensure we stringify.
     }
     $ticket->term = $term;
+    $ticket->expires = $expires; // If 0, use term. If non zero check expires
     $ticket->date = time();
 
     $keyinfo = json_encode($ticket);
@@ -181,7 +183,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short') 
             print_error("Failed making encoded ticket");
         }
     } else {
-        $pkey = '';
+        $pkey = md5($SITE->fullname);
         if (!empty($CFG->passwordsaltmain)) {
             $pkey = substr(base64_encode($CFG->passwordsaltmain), 0, 16);
         }
@@ -245,7 +247,11 @@ function ticket_decode($encrypted, $method = null) {
             print_error('decoderror', 'auth_ticket', $method);
         }
     } else {
-        $pkey = substr(base64_encode(@$CFG->passwordsaltmain), 0, 16);
+        // Des method, mysql internal.
+        $pkey = md5($SITE->fullname);
+        if (!empty($CFG->passwordsaltmain)) {
+            $pkey = substr(base64_encode($CFG->passwordsaltmain), 0, 16);
+        }
         $sql = "
             SELECT
                 AES_DECRYPT(UNHEX(?), ?) as result
@@ -275,27 +281,33 @@ function ticket_accept($ticket, &$gotourl = null) {
 
     $config = get_config('auth_ticket');
 
-    switch ($ticket->term) {
-        case 'short' :
-            if ($ticket->date < time() - $config->shortvaliditydelay) {
-                return false;
-            }
-            break;
+    if (!empty($ticket->expires)) {
+        if ($ticket->date + $ticket->expires < time()) {
+            return false;
+        }
+    } else {
+        switch ($ticket->term) {
+            case 'short' :
+                if ($ticket->date < time() - $config->shortvaliditydelay) {
+                    return false;
+                }
+                break;
 
-        case 'long' :
-            if ($ticket->date < time() - $config->longvaliditydelay) {
-                return false;
-            }
-            break;
+            case 'long' :
+                if ($ticket->date < time() - $config->longvaliditydelay) {
+                    return false;
+                }
+                break;
 
-        case 'persistant' :
-            if ($config->persistantvaliditydelay == 0) {
-                return true;
-            }
-            if ($ticket->date < time() - $config->persistantvaliditydelay) {
-                return false;
-            }
-            assert(1);
+            case 'persistant' :
+                if ($config->persistantvaliditydelay == 0) {
+                    return true;
+                }
+                if ($ticket->date < time() - $config->persistantvaliditydelay) {
+                    return false;
+                }
+                assert(1);
+        }
     }
 
     if (empty($ticket->username)) {
