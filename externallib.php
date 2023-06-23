@@ -41,7 +41,8 @@ class auth_ticket_external extends external_api {
             array(
                 'uidsource' => new external_value(PARAM_ALPHA, 'source for the user id, can be either \'id\', \'username\' or \'idnumber\'', VALUE_DEFAULT, 'id'),
                 'uid' => new external_value(PARAM_TEXT, 'User id', VALUE_DEFAULT, 0),
-                'url' => new external_value(PARAM_TEXT, 'Url to go after access', VALUE_DEFAULT, ''),
+                'url' => new external_value(PARAM_TEXT, 'Url to go', VALUE_DEFAULT, ''),
+                'term' => new external_value(PARAM_TEXT, 'Term of ticket. short, long or persistant', VALUE_DEFAULT, ''),
                 'duration' => new external_value(PARAM_INT, 'Validity duration in second', VALUE_DEFAULT, 0),
                 'purpose' => new external_value(PARAM_TEXT, 'Additional payload for information', VALUE_DEFAULT, ''),
             )
@@ -54,23 +55,29 @@ class auth_ticket_external extends external_api {
      * @param string $uidsource the source field for the user identifier.
      * @param string $uid the userid id. 
      * @param string $url the target where to go url. 
-     * @param string $duration validity duration in seconds.
+     * @param string $term term code of ticket, '', short long or persistant. If not given, requires a duration.
+     * @param int $duration validity duration in seconds.
      * @param string $purpose Additional optional payload. 
      *
      * @return external_description
      */
-    public static function get_ticket($uidsource, $uid, $url, $duration, $purpose) {
-        global $CFG;
+    public static function get_ticket($uidsource, $uid, $url, $term, $duration, $purpose) {
+        global $CFG, $DB;
 
         $parameters = array(
             'uidsource'  => $uidsource,
             'uid'  => $uid,
             'url'  => $url,
+            'term'  => $term,
             'duration'  => $duration,
             'purpose'  => $purpose
         );
         // Calling core validation.
-        $validparams = self::validate_parameters(self::get_certificates_parameters(), $parameters);
+        $validparams = self::validate_parameters(self::get_ticket_parameters(), $parameters);
+
+        if (empty($term) && empty($duration)) {
+            throw new invalid_parameter_exception('Either term or duration should be provided');
+        }
 
         // Make a non blocking call.
 
@@ -80,7 +87,7 @@ class auth_ticket_external extends external_api {
         }
 
         $results =  new StdClass;
-        $results->ticket = ticket_generate($user, $purpodse, $url, null, 'short', $duration);
+        $results->ticket = ticket_generate($user, $purpodse, $url, null, $term, $duration);
         $results->endpoint = $CFG->wwwwroot.('/login/index.php');
 
         return $results;
