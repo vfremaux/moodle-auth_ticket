@@ -19,7 +19,6 @@
  * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
  *
  * Ticket related library
@@ -93,12 +92,12 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
 
     // M4.
     $fields = \core_user\fields::for_name()->get_required_fields();
-    $fields = 'u.id,'.implode(',', $fields);
+    $fields = implode(',', $fields);
 
     $result = $checksendall;
     foreach ($assigns as $assign) {
-        $fields = 'id, '.$fields;
-        $user = $DB->get_record('user', array('id' => $assign->userid), $fields);
+        $fields = 'id,'.$fields;
+        $user = $DB->get_record('user', ['id' => $assign->userid], $fields);
         $ticket = ticket_generate($user, $purpose, $url, $term);
         $notification = str_replace('<%%TICKET%%>', $ticket, $notification);
         $notificationhtml = str_replace('<%%TICKET%%>', $ticket, $notificationhtml);
