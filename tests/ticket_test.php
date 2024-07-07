@@ -94,7 +94,7 @@ class ticket_test extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->tickettimeguard * HOURSECS + 10;
+        $decoded->date -= $this->config->shortvaliditydelay * HOURSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -111,7 +111,7 @@ class ticket_test extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->longtermtickettimeguard * DAYSECS + 10;
+        $decoded->date -= $this->config->longvaliditydelay * DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
