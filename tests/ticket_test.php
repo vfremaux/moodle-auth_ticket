@@ -78,11 +78,11 @@ class ticket_test extends advanced_testcase {
 
         // Test ticket encode/decode.
 
-        // Test with DES.
+        // Test with Internal.  DES needs SQL AES_ENCRYPT() and AES_DECRYPT().
         $reason = 'Self test';
         $url = $CFG->wwwroot;
 
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'short');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'short');
         $decoded = ticket_decode($ticket, 'des');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
@@ -99,7 +99,7 @@ class ticket_test extends advanced_testcase {
         $this->assertFalse($validate);
 
         $reason = 'Quoted \'reason\'';
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'long');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'long');
         $decoded = ticket_decode($ticket, 'des');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
@@ -116,7 +116,7 @@ class ticket_test extends advanced_testcase {
         $this->assertFalse($validate);
 
         $reason = 'Quoted \'reason\'';
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'persistant');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'persistant');
         $decoded = ticket_decode($ticket, 'des');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
