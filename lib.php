@@ -277,11 +277,11 @@ function ticket_decode($encrypted, $method = null) {
 /**
  * checks conditions for ticket internal data validity and initiate the $USER if ticket is valid.
  * @param string $ticket
- * @param stringref &$gotourl the return url to be filled when accepting ticket.
+ * @param string $unused the return url to be filled when accepting ticket.
  * @return true if ticket is accepted.
  */
-function ticket_accept($ticket, &$gotourl = null) {
-    global $DB;
+function ticket_accept($ticket, $unused = null /* not used any more */) {
+    global $DB, $USER;
 
     $config = get_config('auth_ticket');
 
@@ -324,7 +324,9 @@ function ticket_accept($ticket, &$gotourl = null) {
 
     $USER = $user;
 
-    $gotourl = @$ticket->wantsurl;
+    if (!empty($ticket->wantsurl)) {
+        redirect($ticket->wantsurl);
+    }
 
     return true;
 }

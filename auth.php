@@ -178,9 +178,9 @@ class auth_plugin_ticket extends auth_plugin_base {
     /**
      * Checks the time validity of a ticket.
      *
-     * @param objectref &$ticket
+     * @param objectref $ticket
      */
-    public function validate_timeguard(&$ticket) {
+    public function validate_timeguard($ticket) {
 
         $config = get_config(self::COMPONENT_NAME);
 
