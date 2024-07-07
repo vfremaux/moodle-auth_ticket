@@ -51,8 +51,9 @@ class ticket_test extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_ticket();
         $this->config = new stdClass();
-        $this->config->tickettimeguard = 24;
-        $this->config->logtermtickettimeguard = 90;
+        $this->config->shortvaliditydelay = 2;
+        $this->config->longvaliditydelay = 24;
+        $this->config->persistantvaliditydelay = 90;
         $this->config->usessl = 0;
         $this->authplugin->process_config($this->config);
         $this->authplugin->config = get_config(auth_plugin_ticket::COMPONENT_NAME);
@@ -153,8 +154,9 @@ class ticket_test extends advanced_testcase {
     public function test_process_config() {
         $this->assertTrue($this->authplugin->process_config($this->config));
         $config = get_config(auth_plugin_ticket::COMPONENT_NAME);
-        $this->assertEquals($this->config->tickettimeguard, $config->tickettimeguard);
-        $this->assertEquals($this->config->longtermtickettimeguard, $config->longtermtickettimeguard);
+        $this->assertEquals($this->config->shortvaliditydelay, $config->shortvaliditydelay);
+        $this->assertEquals($this->config->longvaliditydelay, $config->longvaliditydelay);
+        $this->assertEquals($this->config->persistantvaliditydelay, $config->persistantvaliditydelay);
         $this->assertEquals($this->config->usessl, $config->usessl);
     }
 }
