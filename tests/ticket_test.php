@@ -58,6 +58,9 @@ class ticket_test extends advanced_testcase {
 
     /**
      * Tests encryption/decrypt
+     * @covers ::ticket_generate
+     * @covers ::ticket_decode
+     * @covers auth_plugin_ticket::validate_timeguard
      */
     public function test_plugin() {
         global $DB, $CFG;
@@ -143,6 +146,7 @@ class ticket_test extends advanced_testcase {
 
     /**
      * Test test_process_config method.
+     * @covers auth_plugin_ticket::process_config
      */
     public function test_process_config() {
         $this->assertTrue($this->authplugin->process_config($this->config));
