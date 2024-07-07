@@ -43,7 +43,7 @@ class ticket_test extends advanced_testcase {
     /**
      * Setup test data.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_ticket();
         $this->config = new stdClass();

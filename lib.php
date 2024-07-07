@@ -39,7 +39,7 @@
  * @param object $sender
  * @param string $title mail subject
  * @param string $notification raw content of the mail
- * @param string $notification_html html content of the mail
+ * @param string $notificationhtml html content of the mail
  * @param string $url return url of the ticket
  * @param string $purpose some textual comment on what the ticket was for
  * @param bool $term the ticket validity duration, may be 'short', 'long' or 'persistant'.
@@ -75,7 +75,7 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
  * @param object $sender user identity of the sender
  * @param string $title mail subject
  * @param string $notification raw content of the mail
- * @param string $notification_html html content of the mail
+ * @param string $notificationhtml html content of the mail
  * @param string $url return url of the ticket
  * @param string $purpose some textual comment on what the ticket was for
  * @param bool $checksendall if true, the function returns true if all the recipients were sucessfull
@@ -277,6 +277,7 @@ function ticket_decode($encrypted, $method = null) {
 /**
  * checks conditions for ticket internal data validity and initiate the $USER if ticket is valid.
  * @param string $ticket
+ * @param stringref &$gotourl the return url to be filled when accepting ticket.
  * @return true if ticket is accepted.
  */
 function ticket_accept($ticket, &$gotourl = null) {
