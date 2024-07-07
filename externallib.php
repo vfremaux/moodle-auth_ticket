@@ -89,7 +89,7 @@ class auth_ticket_external extends external_api {
             throw new invalid_parameter_exception('User not found using this id');
         }
 
-        $results =  new StdClass;
+        $results = new StdClass;
         $results->ticket = ticket_generate($user, $purpodse, $url, null, $term, $duration);
         $results->endpoint = $CFG->wwwwroot.'/login/index.php';
 

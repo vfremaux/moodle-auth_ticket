@@ -236,7 +236,7 @@ function ticket_decode($encrypted, $method = null) {
 
         $decrypted = '';
 
-        // Iterate through each character
+        // Iterate through each character.
         for ($i = 0; $i < strlen($encrypted); $i++) {
             $decrypted .= substr($encrypted, $i, 1) ^ substr($key, $i, 1);
         }
