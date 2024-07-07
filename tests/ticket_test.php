@@ -26,6 +26,7 @@ namespace auth_ticket;
 
 use advanced_testcase;
 use auth_plugin_ticket;
+use Stdclass;
 
 defined('MOODLE_INTERNAL') || die();
 
