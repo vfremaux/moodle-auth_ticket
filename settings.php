@@ -60,5 +60,4 @@ if ($ADMIN->fulltree) {
     $label = get_string('configpersistantvaliditydelay', 'auth_ticket');
     $desc = get_string('configpersistantvaliditydelay_desc', 'auth_ticket');
     $settings->add(new admin_setting_configtext($key, $label, $desc, ''));
-
 }

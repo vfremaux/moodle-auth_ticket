@@ -18,28 +18,27 @@
  * Auth Ticket external functions and service definitions.
  *
  * @package    auth_ticket
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @copyright  2016 Valery Fremaux
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$functions = array(
-
-    'auth_ticket_get_ticket' => array(
+$functions = [
+    'auth_ticket_get_ticket' => [
         'classname' => 'auth_ticket_external',
         'methodname' => 'get_ticket',
         'classpath' => 'auth/ticket/externallib.php',
         'description' => 'Get an access ticket for a user immediate access',
         'type' => 'read',
-        'capabilities' => 'auth/ticket:get'
-    ),
+        'capabilities' => 'auth/ticket:get',
+    ],
 
-    'auth_ticket_validate_ticket' => array(
+    'auth_ticket_validate_ticket' => [
         'classname' => 'auth_ticket_external',
         'methodname' => 'validate_ticket',
         'classpath' => 'auth/ticket/externallib.php',
         'description' => 'Get an access ticket for a user immediate access',
         'type' => 'read',
-        'capabilities' => 'auth/ticket:validate'
-    ),
-
-);
+        'capabilities' => 'auth/ticket:validate',
+    ],
+];

@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Capabilities.
+ *
+ * @package     auth_ticket
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -21,19 +30,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 $capabilities = [
 
-    'auth/ticket:get' => array(
+    'auth/ticket:get' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
-    'auth/ticket:validate' => array(
+    'auth/ticket:validate' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 ];

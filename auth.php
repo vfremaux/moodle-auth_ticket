@@ -15,14 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Auth main class
+ * implements an external access with encrypted access ticket for notification returns
+ *
  * @package     auth_ticket
- * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
- *
- * implements an external access with encrypted access ticket for notification returns
  */
 defined('MOODLE_INTERNAL') || die;
 
@@ -155,7 +155,7 @@ class auth_plugin_ticket extends auth_plugin_base {
             if (!$this->validate_timeguard($ticket)) {
                 return false;
             }
-            $user = $DB->get_record('user', array('username' => $ticket->username, 'deleted' => 0));
+            $user = $DB->get_record('user', ['username' => $ticket->username, 'deleted' => 0]);
 
             $user = $USER = complete_user_login($user);
             $url = str_replace('\\', '', $ticket->wantsurl);

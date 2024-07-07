@@ -16,7 +16,6 @@
 
 /**
  * @package     auth_ticket
- * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
@@ -87,7 +86,7 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
     global $CFG, $DB;
 
     // Get all users assigned to that role in context.
-    $role = $DB->get_record('role', array('id' => $roleid));
+    $role = $DB->get_record('role', ['id' => $roleid]);
     $assigns = get_users_from_role_on_context($role, $context);
 
     // M4.
@@ -183,7 +182,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
         $keypair = mnet_get_keypair();
 
         if (!openssl_public_encrypt($keyinfo, $encrypted, $keypair['publickey'])) {
-            print_error("Failed making encoded ticket");
+            throw new moodle_exception("Failed making encoded ticket");
         }
     } else {
         $pkey = md5($SITE->fullname);
@@ -195,7 +194,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
                 HEX(AES_ENCRYPT(?, ?)) as result
         ";
 
-        if ($result = $DB->get_record_sql($sql, array($keyinfo, $pkey))) {
+        if ($result = $DB->get_record_sql($sql, [$keyinfo, $pkey])) {
             $encrypted = $result->result;
         } else {
             $encrypted = 'encryption error';
@@ -247,7 +246,7 @@ function ticket_decode($encrypted, $method = null) {
         $keypair = mnet_get_keypair();
 
         if (!openssl_private_decrypt(urldecode($encrypted), $decrypted, $keypair['privatekey'])) {
-            print_error('decoderror', 'auth_ticket', $method);
+            throw new moodle_exception('decoderror', 'auth_ticket', $method);
         }
     } else {
         // Des method, mysql internal.
@@ -260,7 +259,7 @@ function ticket_decode($encrypted, $method = null) {
                 AES_DECRYPT(UNHEX(?), ?) as result
         ";
 
-        if ($result = $DB->get_record_sql($sql, array($encrypted, $pkey))) {
+        if ($result = $DB->get_record_sql($sql, [$encrypted, $pkey])) {
             $decrypted = $result->result;
         } else {
             $decrypted = 'encryption error';
@@ -268,7 +267,7 @@ function ticket_decode($encrypted, $method = null) {
     }
 
     if (!$ticket = json_decode(str_replace('/', "\\/", $decrypted))) {
-        print_error('ticketerror', 'auth_ticket', '', $method);
+        throw new moodle_exception('ticketerror', 'auth_ticket', '', $method);
     }
 
     return $ticket;

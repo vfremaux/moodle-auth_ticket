@@ -14,9 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Privacy provider.
+ *
+ * @package     auth_ticket
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
+ */
 namespace auth_ticket\privacy;
-
-defined('MOODLE_INTERNAL') || die();
 
 class provider implements \core_privacy\local\metadata\null_provider {
     /**
