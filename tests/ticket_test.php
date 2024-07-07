@@ -83,7 +83,7 @@ class ticket_test extends advanced_testcase {
         $url = $CFG->wwwroot;
 
         $ticket = ticket_generate($user, $reason, $url, 'internal', 'short');
-        $decoded = ticket_decode($ticket, 'des');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -100,7 +100,7 @@ class ticket_test extends advanced_testcase {
 
         $reason = 'Quoted \'reason\'';
         $ticket = ticket_generate($user, $reason, $url, 'internal', 'long');
-        $decoded = ticket_decode($ticket, 'des');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -117,7 +117,7 @@ class ticket_test extends advanced_testcase {
 
         $reason = 'Quoted \'reason\'';
         $ticket = ticket_generate($user, $reason, $url, 'internal', 'persistant');
-        $decoded = ticket_decode($ticket, 'des');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
