@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lang file for auth Ticket 
+ * Lang file for auth Ticket
  *
  * @package     auth_ticket
  * @author      Valery Fremaux <valery.fremaux@gmail.com>

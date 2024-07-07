@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Auth ticket general library
+ *
  * @package     auth_ticket
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
@@ -22,7 +24,6 @@
  *
  * Ticket related library
  */
-defined('MOODLE_INTERNAL') || die;
 
 /**
  * Simple sending to user with return ticket.
@@ -66,7 +67,7 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
 /**
  * Sends a notification message to all users having the role in the given context.
  *
- * Note that general form of URL to propose a return ticket encoded url is : 
+ * Note that general form of URL to propose a return ticket encoded url is :
  * %WWWROOT%/login/index.php?ticket=%TICKET%
  *
  * @param int $roleid id of the role to search users on
@@ -153,7 +154,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
         $ticket->wantsurl = ''.$url; // Ensure we stringify.
     }
     $ticket->term = $term;
-    $ticket->expires = $expires; // If 0, use term. If non zero check expires
+    $ticket->expires = $expires; // If 0, use term. If non zero check expires.
     $ticket->date = time();
 
     $keyinfo = json_encode($ticket);
@@ -172,7 +173,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
 
         $encrypted = '';
 
-        // Iterate through each character
+        // Iterate through each character.
         for ($i = 0; $i < strlen($keyinfo); $i++) {
                 $encrypted .= substr($keyinfo, $i, 1) ^ substr($key, $i, 1);
         }
@@ -316,7 +317,7 @@ function ticket_accept($ticket, &$gotourl = null) {
         return false;
     }
 
-    if (!$user = $DB->get_record('user', array('username' => $ticket->username))) {
+    if (!$user = $DB->get_record('user', ['username' => $ticket->username])) {
         return false;
     }
 

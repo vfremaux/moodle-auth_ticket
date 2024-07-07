@@ -19,10 +19,11 @@
  * that are matching our four supported Moodle database drivers.
  *
  * @package    auth_ticket
- * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace auth_ticket;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -31,7 +32,7 @@ require_once($CFG->dirroot.'/auth/ticket/auth.php');
 /**
  * Test case for the plugin.
  */
-class auth_ticket_testcase extends advanced_testcase {
+class ticket_test extends advanced_testcase {
 
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;

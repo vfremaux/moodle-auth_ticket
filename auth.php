@@ -38,6 +38,10 @@ class auth_plugin_ticket extends auth_plugin_base {
      * The name of the component. Used by the configuration.
      */
     const COMPONENT_NAME = 'auth_ticket';
+
+    /**
+     * The component's legacy name for older moodles.
+     */
     const LEGACY_COMPONENT_NAME = 'auth/ticket';
 
     /**

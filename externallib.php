@@ -28,6 +28,9 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/lib/externallib.php');
 require_once($CFG->dirroot.'/auth/ticket/lib.php');
 
+/**
+ * Auth Ticket Web services
+ */
 class auth_ticket_external extends external_api {
 
     /**
@@ -36,9 +39,10 @@ class auth_ticket_external extends external_api {
      * @return external_function_parameters
      */
     public static function get_ticket_parameters() {
+        $uidsourcedoc = 'source for the user id, can be either \'id\', \'username\' or \'idnumber\'';
         return new external_function_parameters(
             [
-                'uidsource' => new external_value(PARAM_ALPHA, 'source for the user id, can be either \'id\', \'username\' or \'idnumber\'', VALUE_DEFAULT, 'id'),
+                'uidsource' => new external_value(PARAM_ALPHA, $uidsourcedoc, VALUE_DEFAULT, 'id'),
                 'uid' => new external_value(PARAM_TEXT, 'User id', VALUE_DEFAULT, 0),
                 'url' => new external_value(PARAM_TEXT, 'Url to go', VALUE_DEFAULT, ''),
                 'term' => new external_value(PARAM_TEXT, 'Term of ticket. short, long or persistant', VALUE_DEFAULT, ''),
@@ -52,11 +56,11 @@ class auth_ticket_external extends external_api {
      * Get a valid access ticket for a user
      *
      * @param string $uidsource the source field for the user identifier.
-     * @param string $uid the userid id. 
-     * @param string $url the target where to go url. 
+     * @param string $uid the userid id.
+     * @param string $url the target where to go url.
      * @param string $term term code of ticket, '', short long or persistant. If not given, requires a duration.
      * @param int $duration validity duration in seconds.
-     * @param string $purpose Additional optional payload. 
+     * @param string $purpose Additional optional payload.
      *
      * @return external_description
      */
@@ -69,7 +73,7 @@ class auth_ticket_external extends external_api {
             'url'  => $url,
             'term'  => $term,
             'duration'  => $duration,
-            'purpose'  => $purpose
+            'purpose'  => $purpose,
         ];
         // Calling core validation.
         $validparams = self::validate_parameters(self::get_ticket_parameters(), $parameters);
@@ -87,7 +91,7 @@ class auth_ticket_external extends external_api {
 
         $results =  new StdClass;
         $results->ticket = ticket_generate($user, $purpodse, $url, null, $term, $duration);
-        $results->endpoint = $CFG->wwwwroot.('/login/index.php');
+        $results->endpoint = $CFG->wwwwroot.'/login/index.php';
 
         return $results;
     }
@@ -127,7 +131,7 @@ class auth_ticket_external extends external_api {
     public static function validate_ticket($ticket) {
 
         $parameters = [
-            'ticket'  => $ticket,
+            'ticket' => $ticket,
         ];
         // Calling core validation.
         $params = self::validate_parameters(self::validate_ticket_parameters(), $parameters);
