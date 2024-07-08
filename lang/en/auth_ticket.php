@@ -15,8 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Lang file for auth Ticket
+ *
  * @package     auth_ticket
- * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
@@ -49,21 +50,20 @@ $string['configinternalseed'] = 'Internal seed';
 
 $string['configinternalseed_desc'] = 'Seed for the internal method. Should be set to an arbitrary value.';
 
-$string['configencryption_desc'] = 'DES is simple method and uses a native Mysql function. This is not available on other databases. AES is not database
-dependant, but requires openssl being installed and configures on the server.';
+$string['configencryption_desc'] = 'DES is simple method and uses a native Mysql function. This is not available on other
+ databases. AES is not database dependant, but requires openssl being installed and configures on the server.';
 
 $string['configrsaseed_desc'] = 'An arbitrary secret string for encrypting and decoding the ticket.';
 
 $string['auth_ticketdescription'] = 'This authentication mode allows uers to log in again on Moodle directly from a notification
-message they have received by mail. The encrypted ticket contains all necessay infomation to identify the user and know what comeback url
-is asked for.';
+message they have received by mail. The encrypted ticket contains all necessay infomation to identify the user and know what
+ comeback url is asked for.';
 
-$string['configshortvaliditydelay_desc'] = 'Time of life of the short timelife ticket (in seconds). Short lifetime tickets should be used
-for immediate browseback into moodle.';
+$string['configshortvaliditydelay_desc'] = 'Time of life of the short timelife ticket (in seconds). Short lifetime tickets
+ should be used for immediate browseback into moodle.';
 
-$string['configlongvaliditydelay_desc'] = 'Time of life of the short timelife ticket (in seconds). Long lifetime tickets are usually used
-for browseback that are asynchronous and may be delayed for some days.';
+$string['configlongvaliditydelay_desc'] = 'Time of life of the short timelife ticket (in seconds). Long lifetime tickets
+ are usually used for browseback that are asynchronous and may be delayed for some days.';
 
-$string['configpersistantvaliditydelay_desc'] = 'Persistant delay can be 0 (no limit), or should be set to a very large amount of seconds.
-Note that ticket peristance may be altered by the MNET key renewal whenn using DSA cryting method.';
-
+$string['configpersistantvaliditydelay_desc'] = 'Persistant delay can be 0 (no limit), or should be set to a very large
+ amount of seconds. Note that ticket peristance may be altered by the MNET key renewal whenn using DSA cryting method.';

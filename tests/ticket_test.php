@@ -19,10 +19,15 @@
  * that are matching our four supported Moodle database drivers.
  *
  * @package    auth_ticket
- * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace auth_ticket;
+
+use advanced_testcase;
+use auth_plugin_ticket;
+use Stdclass;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -31,7 +36,7 @@ require_once($CFG->dirroot.'/auth/ticket/auth.php');
 /**
  * Test case for the plugin.
  */
-class auth_ticket_testcase extends advanced_testcase {
+class ticket_test extends advanced_testcase {
 
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;
@@ -42,12 +47,13 @@ class auth_ticket_testcase extends advanced_testcase {
     /**
      * Setup test data.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_ticket();
         $this->config = new stdClass();
-        $this->config->tickettimeguard = 24;
-        $this->config->logtermtickettimeguard = 90;
+        $this->config->shortvaliditydelay = 2;
+        $this->config->longvaliditydelay = 24;
+        $this->config->persistantvaliditydelay = 90;
         $this->config->usessl = 0;
         $this->authplugin->process_config($this->config);
         $this->authplugin->config = get_config(auth_plugin_ticket::COMPONENT_NAME);
@@ -55,6 +61,9 @@ class auth_ticket_testcase extends advanced_testcase {
 
     /**
      * Tests encryption/decrypt
+     * @covers ::ticket_generate
+     * @covers ::ticket_decode
+     * @covers \auth_plugin_ticket::validate_timeguard
      */
     public function test_plugin() {
         global $DB, $CFG;
@@ -69,12 +78,12 @@ class auth_ticket_testcase extends advanced_testcase {
 
         // Test ticket encode/decode.
 
-        // Test with DES.
+        // Test with Internal.  DES needs SQL AES_ENCRYPT() and AES_DECRYPT().
         $reason = 'Self test';
         $url = $CFG->wwwroot;
 
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'short');
-        $decoded = ticket_decode($ticket, 'des');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'short');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -85,13 +94,13 @@ class auth_ticket_testcase extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->tickettimeguard * HOURSECS + 10;
+        $decoded->date -= $this->config->shortvaliditydelay * HOURSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
         $reason = 'Quoted \'reason\'';
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'long');
-        $decoded = ticket_decode($ticket, 'des');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'long');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -102,13 +111,13 @@ class auth_ticket_testcase extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->longtermtickettimeguard * DAYSECS + 10;
+        $decoded->date -= $this->config->longvaliditydelay * DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
         $reason = 'Quoted \'reason\'';
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'persistant');
-        $decoded = ticket_decode($ticket, 'des');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'persistant');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -140,12 +149,14 @@ class auth_ticket_testcase extends advanced_testcase {
 
     /**
      * Test test_process_config method.
+     * @covers \auth_plugin_ticket::process_config
      */
     public function test_process_config() {
         $this->assertTrue($this->authplugin->process_config($this->config));
         $config = get_config(auth_plugin_ticket::COMPONENT_NAME);
-        $this->assertEquals($this->config->tickettimeguard, $config->tickettimeguard);
-        $this->assertEquals($this->config->longtermtickettimeguard, $config->longtermtickettimeguard);
+        $this->assertEquals($this->config->shortvaliditydelay, $config->shortvaliditydelay);
+        $this->assertEquals($this->config->longvaliditydelay, $config->longvaliditydelay);
+        $this->assertEquals($this->config->persistantvaliditydelay, $config->persistantvaliditydelay);
         $this->assertEquals($this->config->usessl, $config->usessl);
     }
 }

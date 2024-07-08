@@ -18,7 +18,6 @@
  * Version details.
  *
  * @package     auth_ticket
- * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)

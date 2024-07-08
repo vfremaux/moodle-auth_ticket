@@ -32,7 +32,7 @@ if ($ADMIN->fulltree) {
     $label = get_string('configencryption', 'auth_ticket');
     $desc = get_string('configencryption_desc', 'auth_ticket');
     $default = 'des';
-    $encoptions = array('internal' => get_string('internal', 'auth_ticket'));
+    $encoptions = ['internal' => get_string('internal', 'auth_ticket')];
     if ($CFG->mnet_dispatcher_mode == 'strict') {
         $encoptions['rsa'] = 'RSA (openssl)';
     }
@@ -60,5 +60,4 @@ if ($ADMIN->fulltree) {
     $label = get_string('configpersistantvaliditydelay', 'auth_ticket');
     $desc = get_string('configpersistantvaliditydelay_desc', 'auth_ticket');
     $settings->add(new admin_setting_configtext($key, $label, $desc, ''));
-
 }
