@@ -19,6 +19,7 @@
  * implements an external access with encrypted access ticket for notification returns
  *
  * @package     auth_ticket
+ * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
