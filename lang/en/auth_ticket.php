@@ -26,6 +26,9 @@
 
 $string['privacy:metadata'] = "The Auth ticket do not store any data belonging to users";
 
+$string['ticket:get'] = 'Can get a ticket';
+$string['ticket:validate'] = 'Can validate a ticket';
+
 $string['auth_ticket'] = 'Ticket direct access';
 $string['auth_tickettitle'] = 'Ticket direct access';
 $string['copytoclipboard'] = 'Copy check url';

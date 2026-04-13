@@ -20,13 +20,13 @@
  * @package     auth_ticket
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
  */
 defined('MOODLE_INTERNAL') || die();
 
 $string['privacy:metadata'] = "Le plugin d\'authentification par ticket ne stocek aucune donnée liée à des utilisateurs.";
-
+$string['ticket:get'] = 'Peut récupérer un ticket';
+$string['ticket:validate'] = 'Peut valider un ticket';
 $string['auth_ticket'] = 'Accès direct par ticket';
 $string['auth_tickettitle'] = 'Accès direct par ticket';
 $string['configtesturl'] = 'Copiez cette url dans un navigateur non connecté.';
