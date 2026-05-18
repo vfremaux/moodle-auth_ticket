@@ -20,10 +20,12 @@
  * @package     auth_ticket
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
+ * @copyright   (C) 2012 onwards Valery Fremaux (http://www.activeprolearn.com)
  *
  * Ticket related library
  */
+
+// phpcs:disable moodle.Commenting.ValidTags.Invalid
 
 /**
  * Simple sending to user with return ticket.
@@ -44,7 +46,8 @@
  * @param string $purpose some textual comment on what the ticket was for
  * @param bool $term the ticket validity duration, may be 'short', 'long' or 'persistant'.
  */
-function ticket_notify($recipient, $sender, $title, $notification, $notificationhtml, $url, $purpose = '', $term = 'short') {
+function ticket_notify($recipient, $sender, $title, $notification, $notificationhtml, $url, $purpose = '',
+        $term = 'short') {
     global $CFG;
 
     if (!empty($url)) {
@@ -81,9 +84,11 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
  * @param bool $checksendall if true, the function returns true if all the recipients were sucessfull
  * @param bool $term the ticket validity duration, may be 'short', 'long' or 'persistant'.
  * @return true if at least one email could be sent or all are sent depending on $checksendall.
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
-function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notificationhtml, $url, $purpose = '',
-                           $checksendall = false, $term = 'short') {
+function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notificationhtml, $url,
+        $purpose = '', $checksendall = false, $term = 'short') {
     global $CFG, $DB;
 
     // Get all users assigned to that role in context.
@@ -131,6 +136,8 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
  * @param string $term the validity delay range in 'short', 'long', or 'persistance'.
  * @param string $expires the validity time in seconds.
  * @return string an encrypted ticket
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 function ticket_generate($user, $reason, $url, $method = null, $term = 'short', $expires = 0) {
     global $CFG, $DB, $SITE;
@@ -211,6 +218,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
  * @param string $encrypted the received ticket
  * @param string $method the decrypt method. Supports 'des' using DB internal function or 'rsa' using openssl layer.
  * @return a decoded ticket object
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 function ticket_decode($encrypted, $method = null) {
     global $CFG, $DB, $SITE;
@@ -277,10 +285,10 @@ function ticket_decode($encrypted, $method = null) {
 /**
  * checks conditions for ticket internal data validity and initiate the $USER if ticket is valid.
  * @param string $ticket
- * @param string $unused the return url to be filled when accepting ticket.
  * @return true if ticket is accepted.
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
-function ticket_accept($ticket, $unused = null /* not used any more */) {
+function ticket_accept($ticket) {
     global $DB, $USER;
 
     $config = get_config('auth_ticket');
