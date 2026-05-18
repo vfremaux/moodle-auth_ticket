@@ -36,7 +36,7 @@ require_once($CFG->dirroot.'/auth/ticket/auth.php');
 /**
  * Test case for the plugin.
  */
-class ticket_test extends advanced_testcase {
+final class ticket_test extends advanced_testcase {
 
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;
@@ -48,6 +48,7 @@ class ticket_test extends advanced_testcase {
      * Setup test data.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_ticket();
         $this->config = new stdClass();
@@ -65,8 +66,8 @@ class ticket_test extends advanced_testcase {
      * @covers ::ticket_decode
      * @covers \auth_plugin_ticket::validate_timeguard
      */
-    public function test_plugin() {
-        global $DB, $CFG;
+    public function test_plugin(): void {
+        global $CFG;
 
         $this->resetAfterTest(true);
 
@@ -151,7 +152,7 @@ class ticket_test extends advanced_testcase {
      * Test test_process_config method.
      * @covers \auth_plugin_ticket::process_config
      */
-    public function test_process_config() {
+    public function test_process_config(): void {
         $this->assertTrue($this->authplugin->process_config($this->config));
         $config = get_config(auth_plugin_ticket::COMPONENT_NAME);
         $this->assertEquals($this->config->shortvaliditydelay, $config->shortvaliditydelay);
