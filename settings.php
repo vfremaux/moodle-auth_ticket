@@ -20,8 +20,7 @@
  * @package    auth_ticket
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
- * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
+ * @copyright   (C) 2012 onwards Valery Fremaux (https://www.activeprolearn.com)
  */
 
 defined('MOODLE_INTERNAL') || die();

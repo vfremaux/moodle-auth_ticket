@@ -76,7 +76,7 @@ class auth_ticket_external extends external_api {
             'purpose'  => $purpose,
         ];
         // Calling core validation.
-        $validparams = self::validate_parameters(self::get_ticket_parameters(), $parameters);
+        self::validate_parameters(self::get_ticket_parameters(), $parameters);
 
         if (empty($term) && empty($duration)) {
             throw new invalid_parameter_exception('Either term or duration should be provided');
@@ -90,7 +90,7 @@ class auth_ticket_external extends external_api {
         }
 
         $results = new StdClass;
-        $results->ticket = ticket_generate($user, $purpodse, $url, null, $term, $duration);
+        $results->ticket = ticket_generate($user, $purpose, $url, null, $term, $duration);
         $results->endpoint = $CFG->wwwwroot.'/login/index.php';
 
         return $results;
@@ -134,7 +134,7 @@ class auth_ticket_external extends external_api {
             'ticket' => $ticket,
         ];
         // Calling core validation.
-        $params = self::validate_parameters(self::validate_ticket_parameters(), $parameters);
+        self::validate_parameters(self::validate_ticket_parameters(), $parameters);
 
         $ticketonbj = ticket_decode($ticket);
 
