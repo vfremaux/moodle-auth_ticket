@@ -18,11 +18,16 @@
  * External database auth sync tests, this also tests adodb drivers
  * that are matching our four supported Moodle database drivers.
  *
- * @package    auth_ticket
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     auth_ticket
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
+ * @copyright   2016 Valery Fremaux
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace auth_ticket;
+
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
 
 use advanced_testcase;
 use auth_plugin_ticket;
@@ -37,7 +42,6 @@ require_once($CFG->dirroot.'/auth/ticket/auth.php');
  * Test case for the plugin.
  */
 final class ticket_test extends advanced_testcase {
-
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;
 

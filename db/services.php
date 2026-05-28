@@ -17,10 +17,10 @@
 /**
  * Auth Ticket external functions and service definitions.
  *
- * @package    auth_ticket
+ * @package     auth_ticket
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
- * @copyright  2016 Valery Fremaux
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright   2016 Valery Fremaux
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
