@@ -55,12 +55,10 @@ final class ticket_test extends advanced_testcase {
         parent::setUp();
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_ticket();
-        $this->config = new stdClass();
-        $this->config->shortvaliditydelay = 2;
-        $this->config->longvaliditydelay = 24;
-        $this->config->persistantvaliditydelay = 90;
-        $this->config->usessl = 0;
-        $this->authplugin->process_config($this->config);
+        set_config('shortvaliditydelay', 2, 'auth_ticket');
+        set_config('longvaliditydelay', 24, 'auth_ticket');
+        set_config('persistantvaliditydelay', 90, 'auth_ticket');
+        set_config('usessl', 0, 'auth_ticket');
         $this->authplugin->config = get_config(auth_plugin_ticket::COMPONENT_NAME);
     }
 
