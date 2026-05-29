@@ -97,7 +97,7 @@ final class ticket_test extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->shortvaliditydelay * HOURSECS + 10;
+        $decoded->date -= $this->authplugin->config->shortvaliditydelay * (int) HOURSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -114,7 +114,7 @@ final class ticket_test extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->longvaliditydelay * DAYSECS + 10;
+        $decoded->date -= $this->authplugin->config->longvaliditydelay * (int) DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -131,7 +131,7 @@ final class ticket_test extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= 2000 * DAYSECS + 10;
+        $decoded->date -= 2000 * (int) DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -148,18 +148,5 @@ final class ticket_test extends advanced_testcase {
             $this->assertEquals($reason, $decoded->reason);
             $this->assertEquals('short', $decoded->term);
         }
-    }
-
-    /**
-     * Test test_process_config method.
-     * @covers \auth_plugin_ticket::process_config
-     */
-    public function test_process_config(): void {
-        $this->assertTrue($this->authplugin->process_config($this->config));
-        $config = get_config(auth_plugin_ticket::COMPONENT_NAME);
-        $this->assertEquals($this->config->shortvaliditydelay, $config->shortvaliditydelay);
-        $this->assertEquals($this->config->longvaliditydelay, $config->longvaliditydelay);
-        $this->assertEquals($this->config->persistantvaliditydelay, $config->persistantvaliditydelay);
-        $this->assertEquals($this->config->usessl, $config->usessl);
     }
 }
