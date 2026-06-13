@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-
     $key = 'auth_ticket/encryption';
     $label = get_string('configencryption', 'auth_ticket');
     $desc = get_string('configencryption_desc', 'auth_ticket');

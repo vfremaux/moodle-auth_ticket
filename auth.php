@@ -25,6 +25,9 @@
  */
 
 // phpcs:disable moodle.Commenting.ValidTags.Invalid
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -35,7 +38,6 @@ require_once($CFG->dirroot.'/auth/ticket/lib.php');
  * Moodle Ticket based authentication.
  */
 class auth_plugin_ticket extends auth_plugin_base {
-
     /**
      * The name of the component. Used by the configuration.
      */
@@ -139,7 +141,7 @@ class auth_plugin_ticket extends auth_plugin_base {
         }
 
         switch ($ticket->term) {
-            case 'persistant': {
+            case 'persistant':
                 /*
                  * This is a passthrough. However, we consider that a 6 years old ticket
                  * might be an exterme limit.
@@ -148,17 +150,15 @@ class auth_plugin_ticket extends auth_plugin_base {
                     return false;
                 }
                 break;
-            }
 
-            case 'long': {
+            case 'long':
                 if ($ticket->date < (time() - $config->longvaliditydelay)) {
                     return false;
                 }
                 break;
-            }
 
             case 'short':
-            default :
+            default:
                 if ($ticket->date < (time() - $config->shortvaliditydelay)) {
                     return false;
                 }

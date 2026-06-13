@@ -26,6 +26,9 @@
  */
 
 // phpcs:disable moodle.Commenting.ValidTags.Invalid
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
 
 /**
  * Simple sending to user with return ticket.
@@ -46,8 +49,16 @@
  * @param string $purpose some textual comment on what the ticket was for
  * @param bool $term the ticket validity duration, may be 'short', 'long' or 'persistant'.
  */
-function ticket_notify($recipient, $sender, $title, $notification, $notificationhtml, $url, $purpose = '',
-        $term = 'short') {
+function ticket_notify(
+    $recipient,
+    $sender,
+    $title,
+    $notification,
+    $notificationhtml,
+    $url,
+    $purpose = '',
+    $term = 'short'
+) {
     global $CFG;
 
     if (!empty($url)) {
@@ -87,8 +98,18 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
  * @SuppressWarnings(PHPMD.ExcessiveParameterList)
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
-function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notificationhtml, $url,
-        $purpose = '', $checksendall = false, $term = 'short') {
+function ticket_notifyrole(
+    $roleid,
+    $context,
+    $sender,
+    $title,
+    $notification,
+    $notificationhtml,
+    $url,
+    $purpose = '',
+    $checksendall = false,
+    $term = 'short'
+) {
     global $CFG, $DB;
 
     // Get all users assigned to that role in context.
@@ -167,7 +188,6 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
     $keyinfo = json_encode($ticket);
 
     if ($method == 'internal') {
-
         $key = $config->internalseed;
         if (empty($config->internalseed)) {
             $key = md5($SITE->fullname);
@@ -185,7 +205,6 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
                 $encrypted .= substr($keyinfo, $i, 1) ^ substr($key, $i, 1);
         }
     } else if ($method == 'rsa') {
-
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
 
@@ -299,19 +318,19 @@ function ticket_accept($ticket) {
         }
     } else {
         switch ($ticket->term) {
-            case 'short' :
+            case 'short':
                 if ($ticket->date < time() - $config->shortvaliditydelay) {
                     return false;
                 }
                 break;
 
-            case 'long' :
+            case 'long':
                 if ($ticket->date < time() - $config->longvaliditydelay) {
                     return false;
                 }
                 break;
 
-            case 'persistant' :
+            case 'persistant':
                 if ($config->persistantvaliditydelay == 0) {
                     return true;
                 }

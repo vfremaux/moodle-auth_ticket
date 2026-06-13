@@ -22,24 +22,33 @@
  * @copyright   2016 Valery Fremaux (http://www.mylearningfactory.com)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace auth_ticket;
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/lib/externallib.php');
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
+
+use stdClass;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 require_once($CFG->dirroot.'/auth/ticket/lib.php');
 
 /**
  * Auth Ticket Web services
  */
-class auth_ticket_external extends external_api {
-
+class external extends external_api {
     /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
      */
     public static function get_ticket_parameters() {
-        $uidsourcedoc = 'source for the user id, can be either \'id\', \'username\' or \'idnumber\'';
+        $uidsourcedoc = 'Source for the user id, can be either \'id\', \'username\' or \'idnumber\'';
         return new external_function_parameters(
             [
                 'uidsource' => new external_value(PARAM_ALPHA, $uidsourcedoc, VALUE_DEFAULT, 'id'),
@@ -89,7 +98,7 @@ class auth_ticket_external extends external_api {
             throw new invalid_parameter_exception('User not found using this id');
         }
 
-        $results = new StdClass;
+        $results = new StdClass();
         $results->ticket = ticket_generate($user, $purpose, $url, null, $term, $duration);
         $results->endpoint = $CFG->wwwwroot.'/login/index.php';
 
@@ -129,7 +138,6 @@ class auth_ticket_external extends external_api {
      * @param int $ticket
      */
     public static function validate_ticket($ticket) {
-
         $parameters = [
             'ticket' => $ticket,
         ];

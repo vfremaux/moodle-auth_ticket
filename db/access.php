@@ -25,10 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Capability definitions for the auth_netypareo plugin.
+// Capability definitions for the auth_ticket plugin.
 
 $capabilities = [
-
     'auth/ticket:get' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

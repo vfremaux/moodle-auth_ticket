@@ -18,11 +18,16 @@
  * External database auth sync tests, this also tests adodb drivers
  * that are matching our four supported Moodle database drivers.
  *
- * @package    auth_ticket
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     auth_ticket
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
+ * @copyright   2016 Valery Fremaux
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace auth_ticket;
+
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
 
 use advanced_testcase;
 use auth_plugin_ticket;
@@ -37,7 +42,6 @@ require_once($CFG->dirroot.'/auth/ticket/auth.php');
  * Test case for the plugin.
  */
 final class ticket_test extends advanced_testcase {
-
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;
 
@@ -51,12 +55,10 @@ final class ticket_test extends advanced_testcase {
         parent::setUp();
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_ticket();
-        $this->config = new stdClass();
-        $this->config->shortvaliditydelay = 2;
-        $this->config->longvaliditydelay = 24;
-        $this->config->persistantvaliditydelay = 90;
-        $this->config->usessl = 0;
-        $this->authplugin->process_config($this->config);
+        set_config('shortvaliditydelay', 2, 'auth_ticket');
+        set_config('longvaliditydelay', 24, 'auth_ticket');
+        set_config('persistantvaliditydelay', 90, 'auth_ticket');
+        set_config('usessl', 0, 'auth_ticket');
         $this->authplugin->config = get_config(auth_plugin_ticket::COMPONENT_NAME);
     }
 
@@ -95,7 +97,7 @@ final class ticket_test extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->shortvaliditydelay * HOURSECS + 10;
+        $decoded->date -= $this->authplugin->config->shortvaliditydelay * (int) HOURSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -112,7 +114,7 @@ final class ticket_test extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->longvaliditydelay * DAYSECS + 10;
+        $decoded->date -= $this->authplugin->config->longvaliditydelay * (int) DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -129,7 +131,7 @@ final class ticket_test extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= 2000 * DAYSECS + 10;
+        $decoded->date -= 2000 * (int) DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -146,18 +148,5 @@ final class ticket_test extends advanced_testcase {
             $this->assertEquals($reason, $decoded->reason);
             $this->assertEquals('short', $decoded->term);
         }
-    }
-
-    /**
-     * Test test_process_config method.
-     * @covers \auth_plugin_ticket::process_config
-     */
-    public function test_process_config(): void {
-        $this->assertTrue($this->authplugin->process_config($this->config));
-        $config = get_config(auth_plugin_ticket::COMPONENT_NAME);
-        $this->assertEquals($this->config->shortvaliditydelay, $config->shortvaliditydelay);
-        $this->assertEquals($this->config->longvaliditydelay, $config->longvaliditydelay);
-        $this->assertEquals($this->config->persistantvaliditydelay, $config->persistantvaliditydelay);
-        $this->assertEquals($this->config->usessl, $config->usessl);
     }
 }
