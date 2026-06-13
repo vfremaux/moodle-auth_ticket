@@ -15,15 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Auth ticket general library
+ *
  * @package     auth_ticket
- * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
+ * @copyright   (C) 2012 onwards Valery Fremaux (http://www.activeprolearn.com)
  *
  * Ticket related library
  */
-defined('MOODLE_INTERNAL') || die;
+
+// phpcs:disable moodle.Commenting.ValidTags.Invalid
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
 
 /**
  * Simple sending to user with return ticket.
@@ -39,12 +44,21 @@ defined('MOODLE_INTERNAL') || die;
  * @param object $sender
  * @param string $title mail subject
  * @param string $notification raw content of the mail
- * @param string $notification_html html content of the mail
+ * @param string $notificationhtml html content of the mail
  * @param string $url return url of the ticket
  * @param string $purpose some textual comment on what the ticket was for
  * @param bool $term the ticket validity duration, may be 'short', 'long' or 'persistant'.
  */
-function ticket_notify($recipient, $sender, $title, $notification, $notificationhtml, $url, $purpose = '', $term = 'short') {
+function ticket_notify(
+    $recipient,
+    $sender,
+    $title,
+    $notification,
+    $notificationhtml,
+    $url,
+    $purpose = '',
+    $term = 'short'
+) {
     global $CFG;
 
     if (!empty($url)) {
@@ -67,7 +81,7 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
 /**
  * Sends a notification message to all users having the role in the given context.
  *
- * Note that general form of URL to propose a return ticket encoded url is : 
+ * Note that general form of URL to propose a return ticket encoded url is :
  * %WWWROOT%/login/index.php?ticket=%TICKET%
  *
  * @param int $roleid id of the role to search users on
@@ -75,19 +89,31 @@ function ticket_notify($recipient, $sender, $title, $notification, $notification
  * @param object $sender user identity of the sender
  * @param string $title mail subject
  * @param string $notification raw content of the mail
- * @param string $notification_html html content of the mail
+ * @param string $notificationhtml html content of the mail
  * @param string $url return url of the ticket
  * @param string $purpose some textual comment on what the ticket was for
  * @param bool $checksendall if true, the function returns true if all the recipients were sucessfull
  * @param bool $term the ticket validity duration, may be 'short', 'long' or 'persistant'.
  * @return true if at least one email could be sent or all are sent depending on $checksendall.
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
-function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $notificationhtml, $url, $purpose = '',
-                           $checksendall = false, $term = 'short') {
+function ticket_notifyrole(
+    $roleid,
+    $context,
+    $sender,
+    $title,
+    $notification,
+    $notificationhtml,
+    $url,
+    $purpose = '',
+    $checksendall = false,
+    $term = 'short'
+) {
     global $CFG, $DB;
 
     // Get all users assigned to that role in context.
-    $role = $DB->get_record('role', array('id' => $roleid));
+    $role = $DB->get_record('role', ['id' => $roleid]);
     $assigns = get_users_from_role_on_context($role, $context);
 
     // M4.
@@ -131,6 +157,8 @@ function ticket_notifyrole($roleid, $context, $sender, $title, $notification, $n
  * @param string $term the validity delay range in 'short', 'long', or 'persistance'.
  * @param string $expires the validity time in seconds.
  * @return string an encrypted ticket
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 function ticket_generate($user, $reason, $url, $method = null, $term = 'short', $expires = 0) {
     global $CFG, $DB, $SITE;
@@ -154,13 +182,12 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
         $ticket->wantsurl = ''.$url; // Ensure we stringify.
     }
     $ticket->term = $term;
-    $ticket->expires = $expires; // If 0, use term. If non zero check expires
+    $ticket->expires = $expires; // If 0, use term. If non zero check expires.
     $ticket->date = time();
 
     $keyinfo = json_encode($ticket);
 
     if ($method == 'internal') {
-
         $key = $config->internalseed;
         if (empty($config->internalseed)) {
             $key = md5($SITE->fullname);
@@ -173,17 +200,16 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
 
         $encrypted = '';
 
-        // Iterate through each character
+        // Iterate through each character.
         for ($i = 0; $i < strlen($keyinfo); $i++) {
                 $encrypted .= substr($keyinfo, $i, 1) ^ substr($key, $i, 1);
         }
     } else if ($method == 'rsa') {
-
         include_once($CFG->dirroot.'/mnet/lib.php');
         $keypair = mnet_get_keypair();
 
         if (!openssl_public_encrypt($keyinfo, $encrypted, $keypair['publickey'])) {
-            print_error("Failed making encoded ticket");
+            throw new moodle_exception("Failed making encoded ticket");
         }
     } else {
         $pkey = md5($SITE->fullname);
@@ -195,7 +221,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
                 HEX(AES_ENCRYPT(?, ?)) as result
         ";
 
-        if ($result = $DB->get_record_sql($sql, array($keyinfo, $pkey))) {
+        if ($result = $DB->get_record_sql($sql, [$keyinfo, $pkey])) {
             $encrypted = $result->result;
         } else {
             $encrypted = 'encryption error';
@@ -211,6 +237,7 @@ function ticket_generate($user, $reason, $url, $method = null, $term = 'short', 
  * @param string $encrypted the received ticket
  * @param string $method the decrypt method. Supports 'des' using DB internal function or 'rsa' using openssl layer.
  * @return a decoded ticket object
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 function ticket_decode($encrypted, $method = null) {
     global $CFG, $DB, $SITE;
@@ -236,7 +263,7 @@ function ticket_decode($encrypted, $method = null) {
 
         $decrypted = '';
 
-        // Iterate through each character
+        // Iterate through each character.
         for ($i = 0; $i < strlen($encrypted); $i++) {
             $decrypted .= substr($encrypted, $i, 1) ^ substr($key, $i, 1);
         }
@@ -247,7 +274,7 @@ function ticket_decode($encrypted, $method = null) {
         $keypair = mnet_get_keypair();
 
         if (!openssl_private_decrypt(urldecode($encrypted), $decrypted, $keypair['privatekey'])) {
-            print_error('decoderror', 'auth_ticket', $method);
+            throw new moodle_exception('decoderror', 'auth_ticket', $method);
         }
     } else {
         // Des method, mysql internal.
@@ -260,7 +287,7 @@ function ticket_decode($encrypted, $method = null) {
                 AES_DECRYPT(UNHEX(?), ?) as result
         ";
 
-        if ($result = $DB->get_record_sql($sql, array($encrypted, $pkey))) {
+        if ($result = $DB->get_record_sql($sql, [$encrypted, $pkey])) {
             $decrypted = $result->result;
         } else {
             $decrypted = 'encryption error';
@@ -268,7 +295,7 @@ function ticket_decode($encrypted, $method = null) {
     }
 
     if (!$ticket = json_decode(str_replace('/', "\\/", $decrypted))) {
-        print_error('ticketerror', 'auth_ticket', '', $method);
+        throw new moodle_exception('ticketerror', 'auth_ticket', '', $method);
     }
 
     return $ticket;
@@ -278,9 +305,10 @@ function ticket_decode($encrypted, $method = null) {
  * checks conditions for ticket internal data validity and initiate the $USER if ticket is valid.
  * @param string $ticket
  * @return true if ticket is accepted.
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
-function ticket_accept($ticket, &$gotourl = null) {
-    global $DB;
+function ticket_accept($ticket) {
+    global $DB, $USER;
 
     $config = get_config('auth_ticket');
 
@@ -290,19 +318,19 @@ function ticket_accept($ticket, &$gotourl = null) {
         }
     } else {
         switch ($ticket->term) {
-            case 'short' :
+            case 'short':
                 if ($ticket->date < time() - $config->shortvaliditydelay) {
                     return false;
                 }
                 break;
 
-            case 'long' :
+            case 'long':
                 if ($ticket->date < time() - $config->longvaliditydelay) {
                     return false;
                 }
                 break;
 
-            case 'persistant' :
+            case 'persistant':
                 if ($config->persistantvaliditydelay == 0) {
                     return true;
                 }
@@ -317,13 +345,15 @@ function ticket_accept($ticket, &$gotourl = null) {
         return false;
     }
 
-    if (!$user = $DB->get_record('user', array('username' => $ticket->username))) {
+    if (!$user = $DB->get_record('user', ['username' => $ticket->username])) {
         return false;
     }
 
     $USER = $user;
 
-    $gotourl = @$ticket->wantsurl;
+    if (!empty($ticket->wantsurl)) {
+        redirect($ticket->wantsurl);
+    }
 
     return true;
 }

@@ -18,11 +18,21 @@
  * External database auth sync tests, this also tests adodb drivers
  * that are matching our four supported Moodle database drivers.
  *
- * @package    auth_ticket
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     auth_ticket
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
+ * @copyright   2016 Valery Fremaux
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace auth_ticket;
+
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
+
+use advanced_testcase;
+use auth_plugin_ticket;
+use Stdclass;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -31,8 +41,7 @@ require_once($CFG->dirroot.'/auth/ticket/auth.php');
 /**
  * Test case for the plugin.
  */
-class auth_ticket_testcase extends advanced_testcase {
-
+final class ticket_test extends advanced_testcase {
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;
 
@@ -42,22 +51,25 @@ class auth_ticket_testcase extends advanced_testcase {
     /**
      * Setup test data.
      */
-    protected function setUp() {
+    protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_ticket();
-        $this->config = new stdClass();
-        $this->config->tickettimeguard = 24;
-        $this->config->logtermtickettimeguard = 90;
-        $this->config->usessl = 0;
-        $this->authplugin->process_config($this->config);
+        set_config('shortvaliditydelay', 2, 'auth_ticket');
+        set_config('longvaliditydelay', 24, 'auth_ticket');
+        set_config('persistantvaliditydelay', 90, 'auth_ticket');
+        set_config('usessl', 0, 'auth_ticket');
         $this->authplugin->config = get_config(auth_plugin_ticket::COMPONENT_NAME);
     }
 
     /**
      * Tests encryption/decrypt
+     * @covers ::ticket_generate
+     * @covers ::ticket_decode
+     * @covers \auth_plugin_ticket::validate_timeguard
      */
-    public function test_plugin() {
-        global $DB, $CFG;
+    public function test_plugin(): void {
+        global $CFG;
 
         $this->resetAfterTest(true);
 
@@ -69,12 +81,12 @@ class auth_ticket_testcase extends advanced_testcase {
 
         // Test ticket encode/decode.
 
-        // Test with DES.
+        // Test with Internal.  DES needs SQL AES_ENCRYPT() and AES_DECRYPT().
         $reason = 'Self test';
         $url = $CFG->wwwroot;
 
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'short');
-        $decoded = ticket_decode($ticket, 'des');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'short');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -85,13 +97,13 @@ class auth_ticket_testcase extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->tickettimeguard * HOURSECS + 10;
+        $decoded->date -= $this->authplugin->config->shortvaliditydelay * (int) HOURSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
         $reason = 'Quoted \'reason\'';
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'long');
-        $decoded = ticket_decode($ticket, 'des');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'long');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -102,13 +114,13 @@ class auth_ticket_testcase extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= $this->config->longtermtickettimeguard * DAYSECS + 10;
+        $decoded->date -= $this->authplugin->config->longvaliditydelay * (int) DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
         $reason = 'Quoted \'reason\'';
-        $ticket = ticket_generate($user, $reason, $url, 'des', 'persistant');
-        $decoded = ticket_decode($ticket, 'des');
+        $ticket = ticket_generate($user, $reason, $url, 'internal', 'persistant');
+        $decoded = ticket_decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -119,7 +131,7 @@ class auth_ticket_testcase extends advanced_testcase {
         // Check it's fresh and valid.
         $this->assertTrue($validate);
         // Make it obsolete.
-        $decoded->date -= 2000 * DAYSECS + 10;
+        $decoded->date -= 2000 * (int) DAYSECS + 10;
         $validate = $auth->validate_timeguard($decoded);
         $this->assertFalse($validate);
 
@@ -136,16 +148,5 @@ class auth_ticket_testcase extends advanced_testcase {
             $this->assertEquals($reason, $decoded->reason);
             $this->assertEquals('short', $decoded->term);
         }
-    }
-
-    /**
-     * Test test_process_config method.
-     */
-    public function test_process_config() {
-        $this->assertTrue($this->authplugin->process_config($this->config));
-        $config = get_config(auth_plugin_ticket::COMPONENT_NAME);
-        $this->assertEquals($this->config->tickettimeguard, $config->tickettimeguard);
-        $this->assertEquals($this->config->longtermtickettimeguard, $config->longtermtickettimeguard);
-        $this->assertEquals($this->config->usessl, $config->usessl);
     }
 }

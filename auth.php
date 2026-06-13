@@ -15,15 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Auth main class
+ * implements an external access with encrypted access ticket for notification returns
+ *
  * @package     auth_ticket
- * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
- * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
- *
- * implements an external access with encrypted access ticket for notification returns
+ * @copyright   (C) 2012 onwards Valery Fremaux (http://www.activeprolearn.com)
  */
+
+// phpcs:disable moodle.Commenting.ValidTags.Invalid
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/authlib.php');
@@ -33,11 +38,14 @@ require_once($CFG->dirroot.'/auth/ticket/lib.php');
  * Moodle Ticket based authentication.
  */
 class auth_plugin_ticket extends auth_plugin_base {
-
     /**
      * The name of the component. Used by the configuration.
      */
     const COMPONENT_NAME = 'auth_ticket';
+
+    /**
+     * The component's legacy name for older moodles.
+     */
     const LEGACY_COMPONENT_NAME = 'auth/ticket';
 
     /**
@@ -58,6 +66,7 @@ class auth_plugin_ticket extends auth_plugin_base {
      * @param string $username
      * @param string $password
      * @return bool Authentication success or failure.
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function user_login($username, $password) {
 
@@ -75,64 +84,11 @@ class auth_plugin_ticket extends auth_plugin_base {
     }
 
     /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param object $config Configuration object
-     * @param array $err
-     * @param array $userfields
-     */
-    public function config_form($config, $err, $userfields) {
-        global $CFG;
-
-        include($CFG->dirroot.'/auth/ticket/config.html');
-    }
-
-    /**
-     * Processes and stores configuration data for this authentication plugin.
-     *
-     * @param object $config Configuration object
-     */
-    public function process_config($config) {
-
-        if (!$config) {
-            $config = new StdClass();
-            $config->shortvaliditydelay = 2;
-            $config->longvaliditydelay = 24;
-            $config->persistantvaliditydelay = 5;
-        }
-
-        // Set to defaults if undefined.
-        $conf = $config->shortvaliditydelay * HOURSECS;
-        $config->shortvaliditydelay = (@$config->shortvaliditydelay) ? $conf : HOURSECS * 2;
-        $conf = $config->longvaliditydelay * HOURSECS;
-        $config->longvaliditydelay = (@$config->longvaliditydelay) ? $conf : HOURSECS * 24;
-        $conf = $config->persistantvaliditydelay * DAYSECS;
-        if (!isset($config->persistantvaliditydelay)) {
-            $config->persistantvaliditydelay = DAYSECS * 90;
-            set_config('persistantvaliditydelay', DAYSECS * 90, 'auth_ticket');
-        }
-        $config->persistantvaliditydelay = (isset($config->persistantvaliditydelay)) ? $conf : DAYSECS * 90;
-        $config->usessl = (isset($config->usessl)) ? $config->usessl : 1;
-
-        // Save settings.
-        set_config('shortvaliditydelay', $config->shortvaliditydelay, self::COMPONENT_NAME);
-        set_config('longvaliditydelay', $config->longvaliditydelay, self::COMPONENT_NAME);
-        set_config('persistantvaliditydelay', $config->persistantvaliditydelay, self::COMPONENT_NAME);
-        set_config('usessl', $config->usessl, self::COMPONENT_NAME);
-
-        return true;
-    }
-
-    /**
      * we do not propose any hooking for explicit login page
      *
      */
     public function loginpage_hook() {
         global $USER, $DB;
-        global $frm; // We must catch the login/index.php $user credential holder.
         global $user;
 
         $config = get_config(self::COMPONENT_NAME);
@@ -155,7 +111,7 @@ class auth_plugin_ticket extends auth_plugin_base {
             if (!$this->validate_timeguard($ticket)) {
                 return false;
             }
-            $user = $DB->get_record('user', array('username' => $ticket->username, 'deleted' => 0));
+            $user = $DB->get_record('user', ['username' => $ticket->username, 'deleted' => 0]);
 
             $user = $USER = complete_user_login($user);
             $url = str_replace('\\', '', $ticket->wantsurl);
@@ -174,9 +130,9 @@ class auth_plugin_ticket extends auth_plugin_base {
     /**
      * Checks the time validity of a ticket.
      *
-     * @param objectref &$ticket
+     * @param objectref $ticket
      */
-    public function validate_timeguard(&$ticket) {
+    public function validate_timeguard($ticket) {
 
         $config = get_config(self::COMPONENT_NAME);
 
@@ -185,7 +141,7 @@ class auth_plugin_ticket extends auth_plugin_base {
         }
 
         switch ($ticket->term) {
-            case 'persistant': {
+            case 'persistant':
                 /*
                  * This is a passthrough. However, we consider that a 6 years old ticket
                  * might be an exterme limit.
@@ -194,17 +150,15 @@ class auth_plugin_ticket extends auth_plugin_base {
                     return false;
                 }
                 break;
-            }
 
-            case 'long': {
+            case 'long':
                 if ($ticket->date < (time() - $config->longvaliditydelay)) {
                     return false;
                 }
                 break;
-            }
 
             case 'short':
-            default :
+            default:
                 if ($ticket->date < (time() - $config->shortvaliditydelay)) {
                     return false;
                 }

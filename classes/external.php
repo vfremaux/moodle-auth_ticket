@@ -18,34 +18,46 @@
  * upgrade processes for this module.
  *
  * @package     auth_ticket
- * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @copyright   2016 Valery Fremaux (http://www.mylearningfactory.com)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace auth_ticket;
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/lib/externallib.php');
+// Abusive PSR12 rule : adds useless spaces in string concatenation.
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
+// phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
+
+use stdClass;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 require_once($CFG->dirroot.'/auth/ticket/lib.php');
 
-class auth_ticket_external extends external_api {
-
+/**
+ * Auth Ticket Web services
+ */
+class external extends external_api {
     /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
      */
     public static function get_ticket_parameters() {
+        $uidsourcedoc = 'Source for the user id, can be either \'id\', \'username\' or \'idnumber\'';
         return new external_function_parameters(
-            array(
-                'uidsource' => new external_value(PARAM_ALPHA, 'source for the user id, can be either \'id\', \'username\' or \'idnumber\'', VALUE_DEFAULT, 'id'),
+            [
+                'uidsource' => new external_value(PARAM_ALPHA, $uidsourcedoc, VALUE_DEFAULT, 'id'),
                 'uid' => new external_value(PARAM_TEXT, 'User id', VALUE_DEFAULT, 0),
                 'url' => new external_value(PARAM_TEXT, 'Url to go', VALUE_DEFAULT, ''),
                 'term' => new external_value(PARAM_TEXT, 'Term of ticket. short, long or persistant', VALUE_DEFAULT, ''),
                 'duration' => new external_value(PARAM_INT, 'Validity duration in second', VALUE_DEFAULT, 0),
                 'purpose' => new external_value(PARAM_TEXT, 'Additional payload for information', VALUE_DEFAULT, ''),
-            )
+            ]
         );
     }
 
@@ -53,27 +65,27 @@ class auth_ticket_external extends external_api {
      * Get a valid access ticket for a user
      *
      * @param string $uidsource the source field for the user identifier.
-     * @param string $uid the userid id. 
-     * @param string $url the target where to go url. 
+     * @param string $uid the userid id.
+     * @param string $url the target where to go url.
      * @param string $term term code of ticket, '', short long or persistant. If not given, requires a duration.
      * @param int $duration validity duration in seconds.
-     * @param string $purpose Additional optional payload. 
+     * @param string $purpose Additional optional payload.
      *
      * @return external_description
      */
     public static function get_ticket($uidsource, $uid, $url, $term, $duration, $purpose) {
         global $CFG, $DB;
 
-        $parameters = array(
+        $parameters = [
             'uidsource'  => $uidsource,
             'uid'  => $uid,
             'url'  => $url,
             'term'  => $term,
             'duration'  => $duration,
-            'purpose'  => $purpose
-        );
+            'purpose'  => $purpose,
+        ];
         // Calling core validation.
-        $validparams = self::validate_parameters(self::get_ticket_parameters(), $parameters);
+        self::validate_parameters(self::get_ticket_parameters(), $parameters);
 
         if (empty($term) && empty($duration)) {
             throw new invalid_parameter_exception('Either term or duration should be provided');
@@ -86,9 +98,9 @@ class auth_ticket_external extends external_api {
             throw new invalid_parameter_exception('User not found using this id');
         }
 
-        $results =  new StdClass;
-        $results->ticket = ticket_generate($user, $purpodse, $url, null, $term, $duration);
-        $results->endpoint = $CFG->wwwwroot.('/login/index.php');
+        $results = new StdClass();
+        $results->ticket = ticket_generate($user, $purpose, $url, null, $term, $duration);
+        $results->endpoint = $CFG->wwwwroot.'/login/index.php';
 
         return $results;
     }
@@ -100,10 +112,10 @@ class auth_ticket_external extends external_api {
      */
     public static function get_ticket_returns() {
         return new external_single_structure(
-            array(
+            [
                 'ticket' => new external_value(PARAM_TEXT, 'Ticket'),
-                'endpoint' => new external_value(PARAM_URL, 'Endpoint where to present ticket')
-            )
+                'endpoint' => new external_value(PARAM_URL, 'Endpoint where to present ticket'),
+            ]
         );
     }
 
@@ -114,9 +126,9 @@ class auth_ticket_external extends external_api {
      */
     public static function validate_ticket_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'ticket' => new external_value(PARAM_TEXT, 'A ticket you hold'),
-            )
+            ]
         );
     }
 
@@ -126,12 +138,11 @@ class auth_ticket_external extends external_api {
      * @param int $ticket
      */
     public static function validate_ticket($ticket) {
-
-        $parameters = array(
-            'ticket'  => $ticket
-        );
+        $parameters = [
+            'ticket' => $ticket,
+        ];
         // Calling core validation.
-        $params = self::validate_parameters(self::validate_ticket_parameters(), $parameters);
+        self::validate_parameters(self::validate_ticket_parameters(), $parameters);
 
         $ticketonbj = ticket_decode($ticket);
 

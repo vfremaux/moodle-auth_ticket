@@ -18,7 +18,6 @@
  * Version details.
  *
  * @package     auth_ticket
- * @category    auth
  * @author      Valery Fremaux <valery.fremaux@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
@@ -26,12 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2023060500;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2026041300;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2022041900;        // Requires this Moodle version.
 $plugin->component = 'auth_ticket';     // Full name of the plugin (used for diagnostics).
-$plugin->release = '4.1.0 (Build 2023060500)';
+$plugin->release = '5.1.0 (Build 2026041300)';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [401, 402];
+$plugin->supported = [500, 503];
 
 // Non moodle attributes.
-$plugin->codeincrement = '4.1.0005';
+$plugin->codeincrement = '5.1.0005';
+$plugin->privacy = 'public';
