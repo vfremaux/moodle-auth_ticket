@@ -31,6 +31,7 @@ namespace auth_ticket;
 
 use advanced_testcase;
 use auth_plugin_ticket;
+use auth_ticket\ticket;
 use Stdclass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -64,8 +65,8 @@ final class ticket_test extends advanced_testcase {
 
     /**
      * Tests encryption/decrypt
-     * @covers ::ticket_generate
-     * @covers ::ticket_decode
+     * @covers \auth_ticket\ticket::generate
+     * @covers ::\auth_ticket\ticket::decode
      * @covers \auth_plugin_ticket::validate_timeguard
      */
     public function test_plugin(): void {
@@ -85,8 +86,8 @@ final class ticket_test extends advanced_testcase {
         $reason = 'Self test';
         $url = $CFG->wwwroot;
 
-        $ticket = ticket_generate($user, $reason, $url, 'internal', 'short');
-        $decoded = ticket_decode($ticket, 'internal');
+        $ticket = ticket::generate($user, $reason, $url, 'internal', 'short');
+        $decoded = ticket::decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -102,8 +103,8 @@ final class ticket_test extends advanced_testcase {
         $this->assertFalse($validate);
 
         $reason = 'Quoted \'reason\'';
-        $ticket = ticket_generate($user, $reason, $url, 'internal', 'long');
-        $decoded = ticket_decode($ticket, 'internal');
+        $ticket = ticket::generate($user, $reason, $url, 'internal', 'long');
+        $decoded = ticket::decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -119,8 +120,8 @@ final class ticket_test extends advanced_testcase {
         $this->assertFalse($validate);
 
         $reason = 'Quoted \'reason\'';
-        $ticket = ticket_generate($user, $reason, $url, 'internal', 'persistant');
-        $decoded = ticket_decode($ticket, 'internal');
+        $ticket = ticket::generate($user, $reason, $url, 'internal', 'persistant');
+        $decoded = ticket::decode($ticket, 'internal');
         $this->assertTrue($decoded != null);
         $this->assertEquals($user->username, $decoded->username);
         $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
@@ -140,8 +141,8 @@ final class ticket_test extends advanced_testcase {
             $reason = 'Self test';
             $url = $CFG->wwwroot;
 
-            $ticket = ticket_generate($user, $reason, $url, 'rsa', 'short');
-            $decoded = ticket_decode($ticket, 'rsa');
+            $ticket = ticket::generate($user, $reason, $url, 'rsa', 'short');
+            $decoded = ticket::decode($ticket, 'rsa');
             $this->assertTrue($decoded != null);
             $this->assertEquals($user->username, $decoded->username);
             $this->assertEquals($url, str_replace('\\', '', $decoded->wantsurl));
