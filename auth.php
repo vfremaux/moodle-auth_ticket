@@ -32,7 +32,8 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/authlib.php');
-require_once($CFG->dirroot.'/auth/ticket/lib.php');
+
+use auth_ticket\ticket;
 
 /**
  * Moodle Ticket based authentication.
@@ -99,13 +100,13 @@ class auth_plugin_ticket extends auth_plugin_base {
             $config = get_config(self::COMPONENT_NAME);
         }
 
-        $sealedticket = optional_param('ticket', null, PARAM_RAW);
+        $sealedticket = optional_param('ticket', null, PARAM_BASE64);
         if (!$sealedticket) {
             // Do nothing but try other login methods.
             return false;
         }
 
-        $ticket = ticket_decode($sealedticket);
+        $ticket = ticket::decode($sealedticket);
 
         if (!empty($ticket)) {
             if (!$this->validate_timeguard($ticket)) {
