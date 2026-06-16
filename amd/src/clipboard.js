@@ -17,7 +17,7 @@
 
 // jshint unused:false, undef:false
 
-define(['jquery', 'core/log', 'core/config'], function($, log, cfg) {
+define(['jquery', 'core/log'], function($, log) {
 
     var authticket = {
 
@@ -31,6 +31,7 @@ define(['jquery', 'core/log', 'core/config'], function($, log, cfg) {
                     .then(function() {
                         $button.css('background-color', '#00FF00');
                         log.debug('pushtoclipboard: copied via Clipboard API');
+                        return true;
                     })
                     .catch(function(err) {
                         log.error('pushtoclipboard: Clipboard API failed', err);
@@ -63,6 +64,6 @@ define(['jquery', 'core/log', 'core/config'], function($, log, cfg) {
             }
         }
     };
-    
+
     return authticket;
 });
