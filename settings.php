@@ -32,10 +32,10 @@ if ($ADMIN->fulltree) {
     $default = 'des';
     $encoptions = ['internal' => get_string('internal', 'auth_ticket')];
     if ($CFG->mnet_dispatcher_mode == 'strict') {
-        $encoptions['rsa'] = 'RSA (openssl)';
+        $encoptions['rsa'] = get_string('rsa', 'auth_ticket');
     }
     if ($CFG->dbtype == 'mysqli' || $CFG->dbtype == 'mariadb') {
-        $encoptions['des'] = 'AES/DES (Mysql only)';
+        $encoptions['des'] = get_string('aesdes', 'auth_ticket');
     }
     $settings->add(new admin_setting_configselect($key, $label, $desc, $default, $encoptions));
 

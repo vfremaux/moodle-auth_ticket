@@ -23,6 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
  */
 
+$string['aesdes'] = 'AES/DES (Mysql seulement)';
 $string['auth_ticket'] = 'Accès direct par ticket';
 $string['auth_ticketdescription'] = 'Ce mode d\'authentification permet à des utilisteurs ayant reçu une notification par courriel de se connecter directement sur leur compte sans passer par la page de login. Le ticket crypté leur ayant été  transmis contient toutes les informations suffisantes de login pendant une certaine durée de temps de validité. Au delà de cette durée le ticket est perdu.';
 $string['auth_tickettitle'] = 'Accès direct par ticket';
@@ -38,12 +39,14 @@ $string['configshortvaliditydelay'] = 'Temps de validité des tickets courts';
 $string['configshortvaliditydelay_desc'] = 'Durée de validité du ticket court (en secondes). Les tickets courts sont utilisés lorsque le délai de retour à Moodle à compter de la génération du ticket est connu comme étant court (retour immédiat ou synchrone).';
 $string['configtesturl'] = 'Copiez cette url dans un navigateur non connecté.';
 $string['configticketusessl'] = 'Si oui, le ticket est crypté/décrypté en utilisant les librairies openssl du système. Si non, c\'est la fonction d\'encryption interne de la base de données qui sera utilisée.';
+$string['debugmsg'] = 'Envoi de notification mail à {$a->recipient}<br>{$a->notification}';
 $string['decodeerror'] = 'Erreur de lecture du ticket';
 $string['encodeerror'] = 'Erreur d\'encodage du ticket';
 $string['internal'] = 'Interne';
 $string['no'] = 'Non (Mysql et MariaDB uniquement)';
 $string['pluginname'] = 'Accès direct par ticket';
-$string['privacy:metadata'] = "Le plugin d\'authentification par ticket ne stocek aucune donnée liée à des utilisateurs.";
+$string['privacy:metadata'] = "Le plugin d\'authentification par ticket ne stocke aucune donnée liée à des utilisateurs.";
+$string['rsa'] = 'RSA (openssl)';
 $string['testurl'] = 'Url de test';
 $string['ticket:get'] = 'Peut récupérer un ticket';
 $string['ticket:validate'] = 'Peut valider un ticket';

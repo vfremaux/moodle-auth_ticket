@@ -23,6 +23,7 @@
  * @copyright   (C) 2012 onwards Valery Fremaux (http://www.activeprolearn.com)
  */
 
+$string['aesdes'] = 'AES/DES (Mysql only)';
 $string['auth_ticket'] = 'Ticket direct access';
 $string['auth_ticketdescription'] = 'This authentication mode allows uers to log in again on Moodle directly from a notification message they have received by mail. The encrypted ticket contains all necessay infomation to identify the user and know what  comeback url is asked for.';
 $string['auth_tickettitle'] = 'Ticket direct access';
@@ -41,12 +42,14 @@ $string['configshortvaliditydelay_desc'] = 'Time of life of the short timelife t
 $string['configtesturl'] = 'Copy this url into a non logged in browser.';
 $string['configticketusessl'] = 'If enabled, the openssl encrypt method is used. If not, the internal AES_ENCRYPT function of the database is used';
 $string['copytoclipboard'] = 'Copy check url';
+$string['debugmsg'] = 'Sending Mail Notification to {$a->recipient}<br>{$a->notification}';
 $string['decodeerror'] = 'Failed reading ticket';
 $string['encodeerror'] = 'Failed encoding ticket';
 $string['internal'] = 'Internal';
 $string['no'] = 'No (Mysql and MariaDB only)';
 $string['pluginname'] = 'Ticket direct access';
 $string['privacy:metadata'] = "The Auth ticket do not store any data belonging to users";
+$string['rsa'] = 'RSA (openssl)';
 $string['testurl'] = 'Test url';
 $string['ticket:get'] = 'Can get a ticket';
 $string['ticket:validate'] = 'Can validate a ticket';

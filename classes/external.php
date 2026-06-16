@@ -24,8 +24,6 @@
  */
 namespace auth_ticket;
 
-defined('MOODLE_INTERNAL') || die;
-
 // Abusive PSR12 rule : adds useless spaces in string concatenation.
 // phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceBefore
 // phpcs:disable PSR12.Operators.OperatorSpacing.NoSpaceAfter
@@ -35,8 +33,7 @@ use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
-
-require_once($CFG->dirroot.'/auth/ticket/lib.php');
+use auth_ticket\ticket;
 
 /**
  * Auth Ticket Web services
@@ -76,6 +73,11 @@ class external extends external_api {
     public static function get_ticket($uidsource, $uid, $url, $term, $duration, $purpose) {
         global $CFG, $DB;
 
+        $context = context_system::instance();
+        if (!has_capability('auth/ticket:get', $context)) {
+            throw new access_denied_exception('No capability with service user to get ticket');
+        }
+
         $parameters = [
             'uidsource'  => $uidsource,
             'uid'  => $uid,
@@ -99,7 +101,7 @@ class external extends external_api {
         }
 
         $results = new StdClass();
-        $results->ticket = ticket_generate($user, $purpose, $url, null, $term, $duration);
+        $results->ticket = ticket::generate($user, $purpose, $url, null, $term, $duration);
         $results->endpoint = $CFG->wwwwroot.'/login/index.php';
 
         return $results;
@@ -138,15 +140,21 @@ class external extends external_api {
      * @param int $ticket
      */
     public static function validate_ticket($ticket) {
+
+        $context = context_system::instance();
+        if (!has_capability('auth/ticket:validate', $context)) {
+            throw new access_denied_exception('No capability with service user to validate ticket');
+        }
+
         $parameters = [
             'ticket' => $ticket,
         ];
         // Calling core validation.
         self::validate_parameters(self::validate_ticket_parameters(), $parameters);
 
-        $ticketonbj = ticket_decode($ticket);
+        $ticketonbj = ticket::decode($ticket);
 
-        return ticket_accept($ticketonbj);
+        return ticket::accept($ticketonbj);
     }
 
     /**
